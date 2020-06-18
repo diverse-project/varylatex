@@ -55,14 +55,11 @@ def get_variable_def(k, v):
 def write_variables(conf, tp):
     """ Write variables to file """
 
-    f = open(os.path.join(tp, "macros.tex"), "w")
-
-    for k, v in conf.items():
-        if k.startswith("var-"):
-            macro = get_variable_def(k.replace("var-", ""), v)
-            f.write(f"{macro}\n")
-
-    f.close()
+    with open(os.path.join(tp, "values.tex"), "w") as f:
+        for k, v in conf.items():
+            if k.startswith("var-"):
+                macro = get_variable_def(k.replace("var-", ""), v)
+                f.write(f"{macro}\n")
 
 
 def compile_latex(filename):
