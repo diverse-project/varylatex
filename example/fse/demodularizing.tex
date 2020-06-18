@@ -1,0 +1,66 @@
+
+We now discuss some defensive protection strategies in the context of our case study. 
+In particular, as modularity is exposing security threats, we define and describe possible \emph{demodularization} mechanisms, i.e., disruptive mechanisms capable of adapting the original modularity.
+
+\subsection{Basic Protection}
+
+Numerous protections exist against reverse engineering or illegal access, in particular in the domain of Web applications as in our case study.
+For instance, it is possible to forbid suspicious connections and block temporarily some internet protocol addresses. 
+An attacker can have difficulties to explore the modularity space. 
+
+Another basic strategy is to obfuscate client code (JavaScript) to make the attacker's tasks harder. 
+A first obstacle is that obfuscation may have some limits and debuggers can partially reduce the desired effect. Another severe limitation -- the most important one -- is that the behaviour logic is also visible through communication traces (HTTP requests) with the server. 
+% More generally obfuscation 
+% not only expressed at the JavaScript 
+ 
+Actually, these two protections were enabled in our case study. But an attacker is still able to reverse engineer the service and get access to the videos. 
+In fact, these techniques try to hinder a possible reverse engineering but do not hide all forms of modularity present in other artefacts (e.g., video playlist).
+This motivates the need for techniques that hide or transform the original modularity of data and code as perceived by an attacker.
+
+\subsection{Demodularization and Heartbreaking} 
+
+A first technique would be to remove all or part of the modularity in a video.
+In our example, it would result in \emph{merging} all the video sequences on the server side. 
+That is, a video variant would then consist in one and unique sequence instead of 18. 
+
+With such demodularization strategy, there is no need for playlists and video sequences. 
+A benefit is that the attacker has only access to a full, monolithic video variant at a time; the modularity units are no longer present, complicating the reverse engineering process. %task  
+% This heavily complicates the task of an attacker.
+ Let say, in this context, an attacker still wants to understand what are the alternatives for each portion of the video. He or she would have to download numerous video variants, and then find commonalities and differences between portions of the videos. The difference of two or more than two videos is not an easy task, requiring to rely on image processing algorithms. A manual review is also needed to specify when and how the video sequences should be cut (the length of alternatives varies). 
+ 
+ % especially in the case study where alternatives significantly differ. 
+
+% and finally detect the sequences.
+Though appealing, the idea of merging video sequences has significant drawbacks. The operation should be realized in the server side for assembling video sequences. It is resource and time-consuming, precluding a reactive, scalable service. A more subtle strategy would be \emph{pre-}generate and store the video variants before a client's request. Generating all the video variants is not feasible as it represents billions of videos. 
+This technique also significantly increases the needs for computation power and storage of the hosting infrastructure.
+
+Overall the demodularization strategy exposed in this subsection has severe drawbacks since all good properties of modularization are lost. 
+
+\subsection{Demodularizing Strategies} 
+
+Other strategies can be considered to adapt the modularity of the video generator so that an attacker either (1) perceives differently and wrongly the original modularity or (2) has severe difficulties to recover and understand the original modularity.  
+
+
+For instance a disruptive technique is to artificially increase the modularity. For example, the server can (randomly):
+\begin{itemize}
+\item add empty videos to the playlist;
+\item change the order of the videos;
+\item modify file names associated to video sequences.
+\end{itemize}
+
+% is it more like shifting modularity?
+
+Another technique is to change the modularity structure. For example, the cutting of video sequences can vary. 
+% be implemented differently -- conceptually stay at 18 
+ Instead of observing 18 video sequences, an attacker would observe, say, 9 sequences. 
+This time, 9 playlists associated to the 9 sequences would actually be constituted of two playlists of successive alternatives.  
+More sophisticated combinations can be envisioned as well while the cutting can be randomly shifted for each client. As a result, an attacker would see a different structure at each request. But internally and eventually the video variants would still be assembled as 18 video sequences. 
+The benefit is that an attacker will have severe difficulties to identify and locate the modularity units, because of a random modification of the modularity structure. 
+ 
+ % It would hinder the access to all the videos and thus the re-engineering of a new service.
+
+Overall, breaking the modularity of the original service can increase its security as it highly disrupts the comprehension of modularity by attackers. 
+However, we note that breaking the modularity at design time may directly impact the development of the application. That is, more engineering effort may be needed to realize an efficient demodularization technique. In some cases, the demodularization involves the modification of different artefacts (e.g., JavaScript source code, generation of video playlists) in the server side and the client side.
+% This may even lead to go against fundamental guidelines of software engineering. % cancel the benefits of building a modular application and 
+
+ Therefore, the focus should be put on generative techniques that act later in the lifetime of an application (\eg at compile or run time). This would allow to keep good properties of modularity when developing and still have a more secured application. %  with respect to modularity.

@@ -1,0 +1,37 @@
+\dcs
+%
+ We describe some hacks related to the family of Windows operating systems. Microsoft sold its Windows products in three distinct packages: (1) \emph{full packaged product} is intended for installation on computers that have not previously had a licensed copy of the software; \emph{upgrade packages} offer a discount to owners of a previous edition of a given product; 
+% In virtually all cases, the license terms require that you stop using the previous edition.
+ (3) \emph{original equipment manufacturer} products offer the steepest discounts of all and are installed on new or refurbished computers.
+% \end{itemize}
+
+In 2008, an upgrade hack in Windows Vista allowed end users to purchase the upgrade edition and install it on any computer -- with no need to purchase the more expensive full edition. Interestingly, the upgrade disc contained in fact the \emph{whole} product line (\ie not just an upgrade).
+%
+
+In 2009, Windows 7 was subject to a hack that allows a clean install of the operating system using an upgrade disc rather than the full version upgrades~\cite{w7microsoft}. 
+Eric Ligman, Microsoft senior sales excellence manager, wrote a series of blog posts. 
+He recognized the hack but also warned users about licensing issues:
+\begin{quote}
+Over the past several days there have been various posts, etc. across a variety of social media engines stating that some "hack" shows that a Windows 7 Upgrade disc can perform a "clean" installation of Windows 7 on a blank drive from a technical perspective. 
+Of course, from the posts I saw, they often forgot to mention a very basic, yet very important piece of information... "Technically possible" does not always mean legal. 
+\end{quote} 
+ % version 
+% Some proprietary systems or applications hide on purpose some features. Users typically have to pay for activating the features. For example, 
+% It calls for investigating \emph{variability-aware security} mechanisms. 
+
+In 2014, Microsoft announced to stop supporting Windows XP, but a simple registry hack lets users continue to get security updates.
+The registry setting makes Windows Update thinks Windows XP system is actually Windows XP POSReady (which is still supported). 
+Hence a Windows XP machine can receive updates for another five years. %, without having to pay. 
+Microsoft quickly reacted: 
+\begin{quote}
+% We recently became aware of a hack that purportedly aims to provide security updates to Windows XP customers. 
+The security updates that could be installed are intended for Windows Embedded and Windows Server 2003 customers and do not fully protect Windows XP customers. Windows XP customers also run a significant risk of functionality issues with their machines if they install these updates, as they are not tested against Windows XP.
+\end{quote}
+
+
+\wprv
+% 
+ The stories with the different variants of Windows have some consequences. Users without a full license of Windows (e.g., Windows 7 Beta available during the trial phases) can fully install Windows 7. Users can apply continued security updates for Windows XP (despite the end of the support).
+The naive implementation allows outsiders to easily modify the settings of the product line. The case shows that technical hacks may be employed to bypass Windows. Though all workarounds violate the terms of license agreements, Microsoft was forced to quickly react and communicate.  
+
+ 

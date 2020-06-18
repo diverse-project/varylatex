@@ -1,0 +1,591 @@
+% This is "sig-alternate.tex" V2.0 May 2012
+% This file should be compiled with V2.5 of "sig-alternate.cls" May 2012
+%
+% This example file demonstrates the use of the 'sig-alternate.cls'
+% V2.5 LaTeX2e document class file. It is for those submitting
+% articles to ACM Conference Proceedings WHO DO NOT WISH TO
+% STRICTLY ADHERE TO THE SIGS (PUBS-BOARD-ENDORSED) STYLE.
+% The 'sig-alternate.cls' file will produce a similar-looking,
+% albeit, 'tighter' paper resulting in, invariably, fewer pages.
+%
+% ----------------------------------------------------------------------------------------------------------------
+% This .tex file (and associated .cls V2.5) produces:
+%       1) The Permission Statement
+%       2) The Conference (location) Info information
+%       3) The Copyright Line with ACM data
+%       4) NO page numbers
+%
+% as against the acm_proc_article-sp.cls file which
+% DOES NOT produce 1) thru' 3) above.
+%
+% Using 'sig-alternate.cls' you have control, however, from within
+% the source .tex file, over both the CopyrightYear
+% (defaulted to 200X) and the ACM Copyright Data
+% (defaulted to X-XXXXX-XX-X/XX/XX).
+% e.g.
+% \CopyrightYear{2007} will cause 2007 to appear in the copyright line.
+% \crdata{0-12345-67-8/90/12} will cause 0-12345-67-8/90/12 to appear in the copyright line.
+%
+% ---------------------------------------------------------------------------------------------------------------
+% This .tex source is an example which *does* use
+% the .bib file (from which the .bbl file % is produced).
+% REMEMBER HOWEVER: After having produced the .bbl file,
+% and prior to final submission, you *NEED* to 'insert'
+% your .bbl file into your source .tex file so as to provide
+% ONE 'self-contained' source file.
+%
+% ================= IF YOU HAVE QUESTIONS =======================
+% Questions regarding the SIGS styles, SIGS policies and
+% procedures, Conferences etc. should be sent to
+% Adrienne Griscti (griscti@acm.org)
+%
+% Technical questions _only_ to
+% Gerald Murray (murray@hq.acm.org)
+% ===============================================================
+%
+% For tracking purposes - this is V2.0 - May 2012
+
+\documentclass{sig-alternate}
+
+\usepackage{todonotes,stmaryrd}
+\usepackage{cite}
+\usepackage{tabularx}
+\usepackage{xspace}
+\let\endproof\relax
+\let\proof\relax
+\usepackage{amssymb,amsmath,mathtools,amsthm}
+\usepackage{url}
+\usepackage{algorithm}
+\usepackage[noend]{algorithmic}
+\usepackage{float}
+\usepackage{subfigure}
+
+\usepackage{enumitem}
+\usepackage{multirow}
+
+\include{macros}
+
+\newcommand\fakenewspaper[0]{fakenewspaperpl\xspace}
+
+\newcommand\rro[1]{\textbf{#1}.}% \subsection*{#1}}
+
+\usepackage{pifont}
+
+
+\graphicspath{\figs}
+
+\newtheorem{theorem}{Theorem}
+
+%\renewcommand{\floatpagefraction}{0.8}% Magic command ! Avoid to have a page with only one figure
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% COMMENTS / ANNOTATIONS / TODOS
+\newif\ifdraft\drafttrue
+% \newif\ifdraft\draftfalse
+
+\iffalse
+
+\ifdraft
+\newcommand\todos[1]{\todo[inline]{TODO (all): #1}}
+\newcommand\ma[1]{\todo[color=green!40,inline]{TODO (Mathieu): #1}}
+\newcommand{\machanged}[1]
+\newcommand\gb[1]{\todo[color=yellow!40,inline]{TODO (Guillaume): #1}}
+\newcommand\rb[1]{\todo[color=blue!35,inline, caption={}]{TODO (Razieh): #1}}
+\newcommand{\rbc}[1]}
+\else
+\newcommand\todos[1]{}
+\newcommand\ma[1]{}
+\newcommand\machanged[1]{#1}
+\newcommand\gb[1]{}
+\newcommand\rb[1]{}
+\newcommand\rbc[1]{#1}
+\fi
+
+\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\ie}{\emph{i.e.,}\xspace}
+\newcommand{\eg}{\emph{e.g.,}\xspace}
+\newcommand{\cf}{\emph{cf.}}
+\newcommand{\etal}{\emph{et al.}\xspace}
+\newcommand{\etc}{\emph{etc.}\xspace}
+\newcommand{\myexample}[1]{	\emph{\small Example: #1}}
+\renewcommand{\myexample}[1]{\emph{Example.} #1}
+\newtheorem{mydef}{Definition}
+\newcommand{\feature}[1]{\emph{#1}}
+
+\newcommand{\uc}[1]{\bold{\emph{#1}}}
+
+
+\newcommand{\dcs}[0]{\emph{Description of the case study.}\xspace}
+\renewcommand{\dcs}[0]{}
+\newcommand{\wprv}[0]{\emph{Why variability should be protected?}\xspace}
+\renewcommand{\wprv}[0]{\textbf{Why protecting variability?}\xspace}
+\newcommand{\mechvar}[0]{\textbf{What kinds of mechanisms can be used for varying and protecting variability?}}
+
+%\usepackage{setspace}
+%\setstretch{0.99}
+%\setstretch{+{{{stretch}}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{listings}
+
+\lstdefinelanguage{JavaScript}{
+  keywords={typeof, new, true, false, catch, function, return, null, catch, switch, var, if, in, while, do, else, case, break},
+  keywordstyle=\color{blue}\bfseries,
+  basicstyle=\ttfamily\getVal{js_style}, % \footnotesize%\tiny, %or \scriptsize \small or \footnotesize etc.
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  sensitive=false,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+   language=JavaScript,
+  % backgroundcolor=\color{lightgray},
+   extendedchars=true,
+   basicstyle=\scriptsize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   numberstyle=\scriptsize,
+   numbersep=7pt,
+   tabsize=1,
+   breaklines=true,
+   showtabs=false,
+   captionpos=b
+}
+
+\hyphenation{para-meterizable}
+
+\pagenumbering{arabic}
+\makeatletter
+\let\@copyrightspace\relax
+%\makeatother
+
+%\toappear{} % To hide the copyright
+
+\begin{document}
+%
+% --- Author Metadata here ---
+%\conferenceinfo{WOODSTOCK}{'97 El Paso, Texas USA}
+%\CopyrightYear{2007} % Allows default copyright year (20XX) to be over-ridden - IF NEED BE.
+%\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
+% --- End of Author Metadata ---
+
+\title{Product Lines Can Jeopardize Their Trade Secrets}
+% Varying Variability:\\ A Software Protection Perspective}
+%
+% You need the command \numberofauthors to handle the 'placement
+% and alignment' of the authors beneath the title.
+%
+% For aesthetic reasons, we recommend 'three authors at a time'
+% i.e. three 'name/affiliation blocks' be placed beneath the title.
+%
+% NOTE: You are NOT restricted in how many 'rows' of
+% "name/affiliations" may appear. We just ask that you restrict
+% the number of 'columns' to three.
+%
+% Because of the available 'opening page real-estate'
+% we ask you to refrain from putting more than six authors
+% (two rows with three columns) beneath the article title.
+% More than six makes the first-page appear very cluttered indeed.
+%
+% Use the \alignauthor commands to handle the names
+% and affiliations for an 'aesthetic maximum' of six authors.
+% Add names, affiliations, addresses for
+% the seventh etc. author(s) as the argument for the
+% \additionalauthors command.
+% These 'additional authors' will be output/set for you
+% without further effort on your part as the last section in
+% the body of your article BEFORE References or any Appendices.
+
+\numberofauthors{1} %  in this sample file, there are a *total*
+% of EIGHT authors. SIX appear on the 'first-page' (for formatting
+% reasons) and the remaining two appear in the \additionalauthors section.
+%
+\author{
+% You can go ahead and credit any number of authors here,
+% e.g. one 'row of three' or two rows (consisting of one row of three
+% and a second row of one, two or three).
+%
+% The command \alignauthor (no curly braces needed) should
+% precede each author name, affiliation/snail-mail address and
+% e-mail address. Additionally, tag each line of
+% affiliation/address with \affaddr, and tag the
+% e-mail address with \email.
+%
+% 1st. author
+\alignauthor
+Mathieu Acher, Guillaume B\'{e}can, Benoit Combemale,\\ Benoit Baudry, and Jean-Marc J\'{e}z\'{e}quel\\
+        \ifVal{LONG_AFFILIATION}
+        \affaddr{Inria - IRISA, University of Rennes 1, France}
+        \ifVal{EMAIL}
+        \email{firstname.lastname@inria.fr}
+        \fi
+        \fi
+}
+% There's nothing stopping you putting the seventh, eighth, etc.
+% author on the opening page (as the 'third row') but we ask,
+% for aesthetic reasons that you place these 'additional authors'
+% in the \additional authors block, viz.
+%\additionalauthors{Additional authors: John Smith (The Th{\o}rv{\"a}ld Group,
+%email: {\texttt{jsmith@affiliation.org}}) and Julius P.~Kumquat
+%(The Kumquat Consortium, email: {\texttt{jpkumquat@consortium.net}}).}
+% \date{30 July 1999}
+% Just remember to make sure that the TOTAL number of authors
+% is the number that will appear on the first page PLUS the
+% number that will appear in the \additionalauthors section.
+
+\maketitle
+
+\begin{abstract}
+\input{abstract.tex}
+\end{abstract}
+
+% A category with the (minimum) three required fields
+%\category{H.4}{Information Systems Applications}{Miscellaneous}
+%A category including the fourth, optional field follows...
+%\category{D.2.8}{Software Engineering}{Metrics}[complexity measures, performance measures]
+
+%\terms{Theory}
+
+%\keywords{Attributed feature models, Product descriptions, Reverse engineering}
+
+\section{Introduction}
+%\input{introduction.tex}
+
+%From a software engineering perspective, modularity is undeniably good and remains a standing goal of any project~\cite{Parnas72,tarr1999}.
+%However, the modularity used as an architectural pattern to help the developer becomes bad if seen from a security point of view; a malicious attacker can too easily understand the overall architecture, locate and reason about critical concerns, and then reuse the modular parts. That is, modularity can dramatically ease and speed up the effort needed to reverse engineer a system. 
+%%
+%
+%The process of recovering a program's design usually includes module breakdowns, the identification of abstractions, control- and data-flows~\cite{byrne1991,canfora2011}. If everything is decomposed from the start, says with a clean object-oriented, component-based or aspect-oriented style, an outsider could immediately recover the implementation details of a system -- even a tool could automatically do the task~\cite{ceccato2014}. The same observation applies for \emph{external data} that a program has to manipulate. That is, a clean modularization of data is beneficial for software developers in charge of implementing the access and processing of data, can be useful for scaling up or out, but eases the task of an attacker.
+%% For example, an execution trace of the system would reflect this modularization with the rendering of the exchanges between objects and components, or the injections of cross-cutting aspects.  
+% From a security point of view, it is not acceptable. A quick and comprehensive discovery of secrets can lead an ill-disposed person motivated by wrongful or mischievous purposes to cause serious damages. 
+%% For instance, an attacker can 
+%
+%% \ma{Examples: OO, Bref, protocols}
+%
+%% As a result of a good modularity, the reverse engineering effort can be dramatically eased and speed up. 
+% 
+%% Modularity is as good for the same reasons it is bad from a security perspective. 
+% It thus seems that the modular qualities may sometimes backfire. 
+%Good when designing, testing, developing, maintaining, or re-engineering a system; bad when deploying or executing the application outside (e.g., in the Web). 
+%The exhibit of modularity, though desired, accidentally opens doors for attackers. 
+%The tension between the two points of view poses an evident problem and dilemma for developers. 
+%% 
+% A first radical attitude is to stop building modular applications when security does matter. 
+%Developers could consider changing their programming styles~\cite{lopes2014exercises} (e.g., through the use of monolithic code), design the application with anti-modular patterns, etc. It goes against any software engineering principles that have been long advocated and that practitioners are hopefully used to apply.
+%Another strategy, less radical and more realistic, is to consider that modularity imposes some tradeoffs. We can envision to lose, from a development perspective, some modularity properties with the intent of increasing security. 
+%
+%In fact, an ideal situation would be to keep the development modular and then to demodularize on purpose, at the right time (e.g., at compile time, or even at runtime), the application.  This requires to statically identify the modularization patterns helpful for an attacker, and to apply dedicated techniques to fade the modularity once it is no longer necessary. This paper argues that systematic methods and automated techniques should seamlessly support practitioners in demodularizing external data their programs have to access.   
+
+% \bc{design time: no decision in the spectrum and good practices... we change at compile time (definitely) or dynamically at run time...}
+
+% security    
+
+The engineering of a product line makes it possible to offer numerous configuration options (or features) and deliver unique products (or variants) to customers. Substantial profit is expected in terms of customer satisfaction, mass customization, market presence, \etc 
+% Numerous product line case studies have been developed, maintained, and have already shown technical benefits and strategic advantages against competitors. % in time to market, cost, and scalability. 
+%
+ But what do you give for free to your competitor when you exhibit a product line? 
+Hopefully nothing: the technical, software realization and the underlying business information of a product line should generally remain hidden to avoid loosing some economical edge.
+% to build a product line as well as the
+ In reality, it may happen that product lines jeopardize their trade secrets. 
+ % That is, an outsider could understand the variability realization and with that gain confidential business information or even direct economical benefit.  
+ For instance, an attacker or a competitor can identify hidden constraints and bypass the product line to get access to features or copyrighted data.
+
+ 
+ 
+ As a first concrete example, let us consider an online newspaper. (We use a real-world example, see Section~\ref{sec:casestudy1} for further details.) This newspaper freely delivers online news and articles to readers. In addition to this free content, there is a protected access for paying subscribers that allow them to read brand new content a few hours before it is made public. However, 
+ a naive implementation in the website of the newspaper allows a regular reader to access protected articles without paying. 
+ %
+ The code impacted is given after: 
+ \lstinputlisting[language=javascript, firstline=1]{lemonde.js}
+
+
+A user can change the user agent of her browser and avoid \emph{"articleBody"} to be replaced by the content of \emph{"articleBodyRestreint"}. Thereby, the user get access to the full content of the article for free.
+The major error is to delegate the checking to the client side, at the JavaScript level. The original intention was to offer a variant of the page to Web search engines in order to reference additional content. However the means to realize the \emph{variants} (for regular readers, for members, for different Web search engines) is highly questionable. It is too easy for an outsider to understand the product line and override functionalities of a certain variant.
+
+This example shows that a trade secret leaked by this naive implementation can have consequences: here the fact to give access for free to a non-member (hence loosing some money); one can also envision that a scrapper could automatically extract all protected content. 
+% \ma{more to say}
+ In fact, various other consequences are possible: a competitor could fully re-engineer a product line and then propose an improved one; technical or marketing constraints could be identified, analysed, and exploited to identify some weaknesses of the business of a product line; digital content under copyright and only accessible through a combination of (hidden) options might be extracted comprehensively, \etc
+% an attacker could grant new privileges and gain access to hidden features of a product line;   % a customer could activate or upgrade some features without paying; 
+ 
+ The first objective of this paper is to warn against possible naive modeling, implementation, and testing of variability leading to the existence of product lines\ifVal{PL_FOOTNOTE}\footnote{We are considering "product lines" in a broad sense, \ie software systems coming in different variants (like the newspapers), generators (like the video generator of Section~\ref{sec:casestudy2}), or configurable systems (like configurators, see Section~\ref{sec:casestudy4}).}\fi that jeopardize their trade secrets.
+ %% maybe we can move this argumentation in Section 3
+ There are two kinds of trade secrets. First, the way a product line is realized: if discovered, the technical advantages are lost, a third-party can further re-exploit domain artefacts, \etc Second, the confidential information of a product line: it may be copyrighted content, a marketing practice, \etc The two secrets are related: the understanding or reverse engineering of the technical realization is usually necessary to collect sensible information.
+ % which is not generally known or reasonably ascertainable by others, and by which a business can obtain an economic advantage over competitors or customers
+% 
+  % for regular readers, members, journalists, web engine
+% Variability remains undoubtedly a standing goal of any project, making the promise of 
+ We present case studies in which the discovery and understanding of variability is possible and can lead to severe (economical) consequences.
+% \begin{itemize}
+% \item 
+ Section~\ref{sec:casestudy1} further details the case of online newspapers, showing other variability-based bugs.
+% \item 
+ Section~\ref{sec:casestudy2} describes an online generator of video variants in which protection of copyrighted data matters.
+%  software protection (frequency distribution, access to data); discovery of variability may kill the "surprise" effect and kill the interest of the generator
+ Section~\ref{sec:casestudy4} points out the protection issues faced by Web configurators.
+% \end{itemize} 
+
+% \item Section~\ref{sec:casestudy3} retrospectively reviews hacks of the family of Windows operating systems (XP, Vista, 7);
+
+
+% We also review techniques that can be used for protecting variability. 
+
+As a result, it is not enough to model, implement, and test a product line. 
+Our vision (hence the second major point of the paper) is that defensive methods and techniques should be developed to specifically protect variability and configurations. % -- or at least further complicate the task of an external actor.
+ We call to further investigate the protection perspective onto software variability, a topic quite absent in the software engineering and product line literature. Numerous techniques for software protection (\eg code obfuscation~\cite{collberg1997taxonomy}) have been considered, but the specificities of variability and configurations raise novel challenges. 
+ A malicious attacker should have difficulties to build mental abstractions, to identify and reason about variability, and to navigate into the configuration space. Otherwise the reverse engineering and the re-engineering of the product line is highly facilitated and can even be automated. 
+Section~\ref{sec:summary} summarizes our findings, discusses potential techniques for protecting variability, and outlines a research roadmap. 
+% 
+ 
+ 
+ % (2) practitioners developing configurable systems, generators, or product lines in which trade secrets might be discovered. 
+
+% practitioners should also think about defensive mechanisms for protecting variability. %  (hence the second point of the paper). 
+
+
+
+ 
+
+% protection of variability matters. 
+
+% Section~\ref{sec:related} reviews works capable of offering demodularizing mechanisms. % highlights open challenges, and 
+% Section~\ref{sec:conclusion} summarizes our vision. % and concludes the paper. 
+
+% We do not think so. 
+
+%The remainder of the paper is organized as follows. 
+% \emph{Remainder.}  describes the case study. % for which we have identified the problem.  
+% Section~\ref{sec:demodularizing} describes potential defensive solutions and discusses some tradeoffs.  
+
+
+
+\section{Product Lines Can Jeopardize\\ Trade Secrets} % Case Studies
+\label{sec:casestudy}
+%\input{casestudies.tex}
+
+% We now introduce three case studies, \ie product lines that (can) jeopardize trade secrets.
+% For each case, we describe (1) the application domain, the management of variability, and the economical value of the product line; (2) the trade secrets a product line can incidentally jeopardize due to improper management and implementation of variability. 
+% Section~\ref{sec:summary} will further discuss the underlying challenges for protecting product lines and their variability.
+% As we will see, the video service is representative of the product line issues identified in the introduction; it acts as a case study~\cite{yin2002}.
+% (i.e., "an empirical inquiry that investigates a contemporary phenomenon within its real-life context"~\cite{yin2002}).
+
+
+\subsection{Online Newspapers (Cont')}
+\label{sec:casestudy1}
+\input{newspaper.tex}
+
+\dcs
+% We consider again the case of online newspapers. 
+ The first example in the introduction is based on a real wrong design decision\footnote{\url{http://linuxfr.org/users/jarvis/journaux/lemonde-fr-ou-l-abonnement-au-javascript}} that has been fixed afterwards. % ~\cite{linuxfr}
+We now describe another problem in the same domain. For confidential reasons, we call it \textsf{\fakenewspaper} hereafter. % we do not mention the name of the newspaper. We 
+% 
+ The website is separated in two domains (1) 
+% \begin{itemize}
+% \item 
+www.\fakenewspaper.\\com gives a limited access to public articles;
+% \item 
+ (2) subscribers.\\ \fakenewspaper.com gives a complete access to paying customers.
+% \end{itemize}
+In complement to providing early access to new articles, the variant of \textsf{\fakenewspaper} for subscribers provides additional services (e.g., easy-reading option, limited amount of advertising). % innovative navigation, better interfaces for mobile supports, 
+% (\emph{plus} some services like easy-reading). 
+ As in the previous example, the verification is done on the client side. 
+When a visitor accesses subscribers.\fakenewspaper.com, a JavaScript checks whether she is a member. 
+In case the user is not a member, the page is redirected to www.\fakenewspaper.com. 
+
+\wprv
+By deactivating JavaScript\footnote{\eg with \url{https://noscript.net/}}, a regular (non paying) reader can  access articles that should be restricted to subscribers.\fakenewspaper.com. 
+An outsider can even implement a script that automates the task of finding the complete text in subscribers.\fakenewspaper.com and injecting it in the normal page of www.\fakenewspaper.com:
+ \lstinputlisting[language=javascript, firstline=1]{lemonde2.js}
+Similar scripts can be implemented so that regular readers can use the variant of \fakenewspaper and benefit from the subscribers' options (e.g., limited advertising) of subscribers.\fakenewspaper.com  for free. 
+
+We can wonder why \textsf{\fakenewspaper} uses such a naive approach for protecting its variant and options. 
+Several hypothesis can be formulated. The first one is that this approach is easy to implement for developers while the economical risk might be considered as limited. That is, there is a tradeoff between development effort and protection of trade secrets. 
+The second hypothesis is that there is actually a third variant for Web search engines. There is a clear need to reference content in this domain -- it is crucial for the business of newspapers to be properly referenced in search engines. This implementation strategy has the merit of allowing search engines to easily crawl the articles. 
+Again a tradeoff has certainly been discussed and found. In any case, the current solution is clearly suboptimal. 
+More sophisticated strategies can certainly be considered not to jeopardize trade secrets. 
+%  find. 
+% there is a tradeoff 
+
+
+\vspace*{-2mm}
+\subsection{Video Generator}
+\label{sec:casestudy2}
+%\input{casestudy1.tex}
+
+
+
+
+
+\dcs
+We report on an experience related to an online video generator. 
+% Some details have been reported in. % (\url{http://bref30ans.canalplus.fr}). 
+ Compared to~\cite{BrefVamos14}, we add here further details under the angle of software protection.
+% The goal is to explain that the video service is representative of the product line issues identified in the introduction; it acts as a case study~\cite{yin2002}.
+% (i.e., "an empirical inquiry that investigates a contemporary phenomenon within its real-life context"~\cite{yin2002}).
+ The service offers to generate variants of an humorous video. Internet users simply have to type their name, select 3 options, and a particular video is launched and visualised in the browser. % (see Figure~\ref{fig:brefo}, page~\pageref{fig:brefo}). 
+The service is quite popular and successful: more than 1.7M of video variants have been generated in 1 week. 
+%We had an interest in the Web site, since the service claims that a particular video is resulting from a combination among billions. Moreover the term % \emph{generator} is explicitly employed.  
+% Our original intuition was that the video service resembles to a software product line, i.e., generative techniques and variability are likely to be present. 
+ We put ourselves as attackers. We audited and studied the generator as a black box system without access to the source code of the server side. 
+% Moreover, client side code is obfuscated as in the original service. 
+%A first step was to reverse engineer the system. 
+% In essence, reverse engineering \emph{"consists in deriving information from the available software artifacts and translating it into abstract representations more easily understandable by humans"}~\cite{canfora2011}. 
+ We started reverse engineering the service through the analysis of the communications between the server and the client. 
+Though the JavaScript was \emph{obfuscated}, the observations of HTTP requests and the use of a JavaScript debugger reveal the overall behaviour. We quickly noticed that all video variants are constituted of 18 sequences of videos that are themselves separated in several sub-parts. 
+That is, a video variant is modularized. 
+
+
+% \vspace*{-2mm}
+
+The partitioning of the video in 18 sequences forms a first level of modularity (see \ding{192} in Figure~\ref{fig:generator}). % The objective is to avoid the generation of billions of videos on the server side.
+For each sequence of a video, numerous alternatives are possible. This corresponds to a second level of modularity which focus on the variability of the video sequences (see \ding{193} in Figure~\ref{fig:generator}). A video variant results of the selection of an alternative for each sequence. The generator automatically selects an alternative, either based on the 3 selected options or through probabilistic choices for the other 15 sequences. 
+% (the inference of frequencies per alternatives is out of the scope of the paper).
+ Finally, a third level of modularity is realized by the partitioning of each alternative (see \ding{194} in Figure~\ref{fig:generator}). Overall modularity allows the server to share small video files and thus to improve the scalability/reactivity the service.
+ 
+ 
+\begin{figure}
+\centering
+\includegraphics[width=\getVal{bref_size}\linewidth]{figures/bref-generator.pdf}
+\vspace*{-4mm}
+\caption{\label{fig:generator}Video generator: modularity and variants}
+% \vspace*{-4mm}
+\end{figure}
+
+Figure~\ref{fig:process} shows how the client and the server communicate to generate and play a video variant. First, the client asks for the generation of a new video. The server returns a list of file names corresponding to the selected sequences ($\{S1a2, ..., S18a4\}$ in our example).  
+Each file corresponds to a playlist that defines the sub-parts of the sequence \eg in \ding{195} of Figure~\ref{fig:generator} the playlist defines 3 sub-videos: S9a10, S9a11 and S9a12.
+The client downloads all the playlists and their corresponding videos. Finally, the client \emph{merges} the videos of the playlists and plays the resulting video variant.
+
+
+\begin{figure}
+\centering
+\includegraphics[width=\getVal{cserver_size}\linewidth]{figures/server-client.pdf}
+\vspace*{-2mm}
+\caption{\label{fig:process}Communications server/client}
+\vspace*{-4mm}
+\end{figure}
+
+
+
+
+
+% We have then contacted the creators of the video generator with two research questions and goals in mind: (1) can we \emph{automate} the extraction of variation points and configurations (video variants)? (2) can we re-engineer another generator and configurator? 
+% The creators accepted to collaborate and provided us with an access to an offline version of the generator. However we did not have access to the source code % neither in the server side nor in the client side. Like this, we can study the generator as a black box system -- as it would be the case in reality -- but without disturbing the deployed Web generator (e.g., with hundreds of HTTP requests). 
+% \ma{We can remove this one: 
+% The interest for the creators was to audit their systems.
+ % security mechanisms for avoiding or at least complicating our tasks.
+%
+
+
+
+
+%  and defensive mechanisms have to be considered. 
+
+\wprv
+%
+%  Our first audit showed that a reverse engineering work can get access to all the video sequences. Furthermore, ,
+   % (see~\cite{BrefVamos14} for more details). 
+% 15 new variation points are now apparent, out of which 13 are configurable (i.e., exhibiting at least 2 alternatives). 
+% For the 3 variation points also present in the original configurator, users can now explicitly choose the alternatives. 
+ The implementation of the product line can cause two important threats. 
+The first threat is that an attacker can download the video sequences, which are protected by copyright. As digital content is a key business value, protecting the access to data becomes a security problem. Without defensive mechanisms, an attacker can extract and generate all the possible video variants of the original service. 
+%
+ The second consequence is that a new configurator can be re-engineered and could "kill the original idea"~\cite{BrefVamos14}. Specifically we showed it is straightforward to re-engineer a new generator and configurator in which users configure in a fine-grained way the 18 variations points -- instead of only 3 in the original version.
+That is, with a re-engineered solution, the surprise effect is limited when getting a new video variant. Instead, users can control, choose and visualize \emph{any} alternative (video sequence). The creators of the generator did not have this intention  -- they did not want to jeopardize their trade secrets.
+
+% calling to consider security issues. % -- though the idea of  
+% -- thus dramatically limiting the \emph{surprise} effect. 
+
+ % In other words, they have taken a strategic decision for, on-purpose, delimiting the scope of variability and restraining the visibility of some variation points and alternatives. 
+
+% Our experience shows that the scoping of variability (i.e., what is visible to users) is a strategic solution and, 
+% Overall the generator is well engineered and modularity is the right way to do from a development perspective. 
+% Modularity is also needed to scale: as further emphasized in the next section, it is technically difficult to pre-generate millions of video variants.   \ma{says something like "modularity" or "featurization" is advocated by SPLE}
+
+An important lesson learned is that the \emph{modularity} of data (video variants) poses a problem from a protection perspective.  
+From a software engineering and product line perspective, modularity is undeniably good and remains a standing goal of any project. However modularity can backfire: an attacker can too easily understand the generation process and the differences between alternative sequences. 
+With modularity, the task of determining the number of sequences and identifying the alternatives corresponding to each sequence does not face any obstacles. Similarly the collection and the \emph{composition} of video sequences is immediately understood. 
+% Overall, a malicious attacker could not only collect all videos but could also launch a new competing video generator service; it is not acceptable.
+
+Another important lesson learned is that an attacker should have difficulties to navigate into the configuration space. Otherwise she will be able to understand the whole product line and extract trade secrets in a \emph{comprehensive} and \emph{automatic} manner. Protection mechanisms for blocking frequent requests are worth considering but may not be sufficient. 
+% An attacker can have difficulties to explore the modularity space.
+
+ 
+% \ma{insist more on the "configurations" problem; rephrase or insist more on the "variability" aspect}
+
+
+
+
+% \subsection{Windows Operating System Family}
+% \label{sec:casestudy3}
+% \input{win7.tex}
+
+\subsection{Web Configurators}
+\label{sec:casestudy4}
+\input{configurator.tex}
+
+
+% \subsection{Other Cases}
+
+% Our is by no means comprehensive.
+% There are other product lines (and systems with variability) subject to protection issues. 
+% We can cite the family of Windows operating systems (see the hacks with different variants of Windows 7~\cite{w7microsoft})
+% The three case studies we discussed are not the only examples of product lines
+
+% \section{Case Study 2}
+% \label{sec:casestudy2}
+% \input{casestudy2.tex}
+
+% \section{Case Study 3}
+% \label{sec:casestudy3}
+% \input{casestudy3.tex}
+
+% \section{Case Study 4}
+% \label{sec:casestudy4}
+% \input{casestudy4.tex}
+
+\section{Protect Variability!}
+\label{sec:summary}
+\input{summary.tex}
+
+% \section{Related Work}
+% \label{sec:related}
+% \input{related.tex}
+
+\textbf{Concluding remarks.}
+\label{sec:conclusion}
+\input{conclusion.tex}
+
+\ifVal{ACK}
+\ifVal{BOLD_ACK}\textbf{Acknowledgements.}\fi
+\ifVal{PARAGRAPH_ACK}\paragraph{Acknowledgements}\fi We thank anonymous reviewers for their valuable feedbacks. % well-deserved! 
+\ifVal{LONG_ACK} We thank Pierre Laperdrix for the newspaper example. \fi
+% project fundings also
+\fi
+%
+\scriptsize
+%\vspace*{-2mm}
+\vspace*{-\getVal{vspace_bib}mm}
+\bibliographystyle{abbrv}
+\bibliography{DEModularity15}  
+% You must have a proper ".bib" file
+%  and remember to run:
+% latex bibtex latex latex
+% to resolve all references
+%
+% ACM needs 'a single self-contained file'!
+%
+%\balancecolumns
+
+% That's all folks!
+\end{document}

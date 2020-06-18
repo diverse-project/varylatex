@@ -1,0 +1,64 @@
+% We now introduce three case studies, \ie product lines that (can) jeopardize trade secrets.
+% For each case, we describe (1) the application domain, the management of variability, and the economical value of the product line; (2) the trade secrets a product line can incidentally jeopardize due to improper management and implementation of variability. 
+% Section~\ref{sec:summary} will further discuss the underlying challenges for protecting product lines and their variability.
+% As we will see, the video service is representative of the product line issues identified in the introduction; it acts as a case study~\cite{yin2002}.
+% (i.e., "an empirical inquiry that investigates a contemporary phenomenon within its real-life context"~\cite{yin2002}).
+
+
+\subsection{Online Newspapers (Cont')}
+\label{sec:casestudy1}
+\input{newspaper.tex}
+
+\dcs
+% We consider again the case of online newspapers. 
+ The first example in the introduction is based on a real wrong design decision\footnote{\url{http://linuxfr.org/users/jarvis/journaux/lemonde-fr-ou-l-abonnement-au-javascript}} that has been fixed afterwards. % ~\cite{linuxfr}
+We now describe another problem in the same domain. For confidential reasons, we call it \textsf{\fakenewspaper} hereafter. % we do not mention the name of the newspaper. We 
+% 
+ The website is separated in two domains (1) 
+% \begin{itemize}
+% \item 
+www.\fakenewspaper.\\com gives a limited access to public articles;
+% \item 
+ (2) subscribers.\\ \fakenewspaper.com gives a complete access to paying customers.
+% \end{itemize}
+In complement to providing early access to new articles, the variant of \textsf{\fakenewspaper} for subscribers provides additional services (e.g., easy-reading option, limited amount of advertising). % innovative navigation, better interfaces for mobile supports, 
+% (\emph{plus} some services like easy-reading). 
+ As in the previous example, the verification is done on the client side. 
+When a visitor accesses subscribers.\fakenewspaper.com, a JavaScript checks whether she is a member. 
+In case the user is not a member, the page is redirected to www.\fakenewspaper.com. 
+
+\wprv
+By deactivating JavaScript\footnote{\eg with \url{https://noscript.net/}}, a regular (non paying) reader can  access articles that should be restricted to subscribers.\fakenewspaper.com. 
+An outsider can even implement a script that automates the task of finding the complete text in subscribers.\fakenewspaper.com and injecting it in the normal page of www.\fakenewspaper.com:
+ \lstinputlisting[language=javascript, firstline=1]{lemonde2.js}
+Similar scripts can be implemented so that regular readers can use the variant of \fakenewspaper and benefit from the subscribers' options (e.g., limited advertising) of subscribers.\fakenewspaper.com  for free. 
+
+We can wonder why \textsf{\fakenewspaper} uses such a naive approach for protecting its variant and options. 
+Several hypothesis can be formulated. The first one is that this approach is easy to implement for developers while the economical risk might be considered as limited. That is, there is a tradeoff between development effort and protection of trade secrets. 
+The second hypothesis is that there is actually a third variant for Web search engines. There is a clear need to reference content in this domain -- it is crucial for the business of newspapers to be properly referenced in search engines. This implementation strategy has the merit of allowing search engines to easily crawl the articles. 
+Again a tradeoff has certainly been discussed and found. In any case, the current solution is clearly suboptimal. 
+More sophisticated strategies can certainly be considered not to jeopardize trade secrets. 
+%  find. 
+% there is a tradeoff 
+
+
+\vspace*{-2mm}
+\subsection{Video Generator}
+\label{sec:casestudy2}
+\input{casestudy1.tex}
+
+% \subsection{Windows Operating System Family}
+% \label{sec:casestudy3}
+% \input{win7.tex}
+
+\subsection{Web Configurators}
+\label{sec:casestudy4}
+\input{configurator.tex}
+
+
+% \subsection{Other Cases}
+
+% Our is by no means comprehensive.
+% There are other product lines (and systems with variability) subject to protection issues. 
+% We can cite the family of Windows operating systems (see the hacks with different variants of Windows 7~\cite{w7microsoft})
+% The three case studies we discussed are not the only examples of product lines

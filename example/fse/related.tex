@@ -1,0 +1,57 @@
+%\bb{Obfuscation}
+%\bc{Two areas of work: (1) breaking some artefact for improving other non functional property eg performance (M. Reiner) (2) demodularization strategies}
+
+% \subsection{Code obfuscation}
+Software is composed of two elements: code and data~\cite{WirthAlgorithms}.
+Demodularizing source code has been extensively studied, as we show in the following. However, only a few works have focused on \emph{demodularizing the external data and the source code in charge of accessing data}. 
+
+\emph{Data obfuscation} aims at obscuring the purpose of the artefacts and the data structures that a program manipulates during its execution~\cite{naumovich2003preventing}.
+In~\cite{collberg1998breaking} several techniques are proposed to demodularize Java classes and data types by breaking their structures. In particular, they propose to split or merge arrays. We can relate this example to our case study as we also propose to split or merge sequences of videos.
+The main difference with our work is the nature of the data. In our case, we consider the demodularization of external artefacts such as video files instead on focusing on the internal variables and data structures of a program.
+
+Source code deconstruction, such as control flow degeneration and data flow disturbance, are essential techniques for \emph{code obfuscation}. Code obfuscation aims at preventing reverse engineering and code tampering to protect intellectual property and business secrets.
+%Why is obfuscation a kind of diversification?
+% A basic obfuscation technique simply transforms a program $P$ in a program $P'$ which is distributed. 
+ Since obfuscation is automated, it is often possible to generate several different obfuscated versions of the same program (as proposed by Collberg \etal~\cite{collberg12} for example).
+
+Wang \etal \cite{wang01} propose a multi-level program transformation that aims at degenerating  the control flow so as to provide in-depth obfuscation. %This work on program transformation takes place in the context of a software architecture for survivable systems as proposed by Knight et al. \cite{knight00}. 
+Wang's approach consists in two main steps: transform all high-level control flow structures in \emph{if-then-goto} structures; introduce aliases in the goto statements so that the goto address is determined only at runtime.
+
+
+%In both cases, this kind of technique results in a semantic diversity of execution profiles, and consequently is deeply related to automated diversity.
+
+Another approach consists in letting programs self-modify. These programs embed a runtime randomization technique \cite{mavrogiannopoulos2011taxonomy}, which will modify the binary code in way that attackers cannot retrieve the structure of the control or data flow. This is done for sake of security and is considered one of the strongest obfuscation mechanism~\cite{mavrogiannopoulos2011taxonomy}. 
+%
+ For an overview on code obfuscation, we refer to the now classical taxonomy by Collberg and colleagues~\cite{collberg1997taxonomy}.  
+
+% ~\cite{DBLP:series/ais/Rinard11}
+% 
+% ~\cite{DBLP:conf/aosd/Rinard12}
+
+% \subsection{}
+Altering the source code initially developed, either at compile or at runtime, is a common approach that was already investigated for other non functional properties than security (e.g., performance).
+% For example, in the context of quality of service, 
+ Sidiroglou \etal~\cite{Sidiroglou-Douskos2011} have introduced loop perforation and shown that in some domains it is possible to skip the execution of loop iterations. 
+For instance, in a video decoding algorithm (codec), skipping some loop iterations has an effect on some pixels or contours but does not further degrade or crash the software application. On the other hand, skipping loop iterations is key with respect to performance. 
+In other words, it is possible to manipulate a program's functionality to handle performance or  security issues~\cite{Rinard11}. This trade-off can be set offline (e.g. by arbitrarily skipping one every two loops) or dynamically based on the current load of the machine or intrusion detection.
+
+% This approach is also intensively used in the context of optimizing compilers that try to optimize some properties in the generated code (e.g., execution time or memory consumption). Such approaches that act at compile time apply some static analysis of the source code, and adapt the design for optimization purpose. For example, the polyhedral model \cite{quillere2000} is commonly used for loop nest optimization to detect where a set of loop transformations can be applied for the purpose of locality optimization or parallelization.
+
+% Besides, numerous techniques have been proposed to automate the remodularization of an existing software project~\cite{DuBois2004,Bryton2008,Zanetti2014,Goldstein2014}. The goal is rather to improve modularity properties, for instance, to ease the maintenance of an application. 
+
+% All exposed techniques in this section offer \emph{demodularizing} mechanisms. Some of them have different goals and do not necessarily target security issues. We believe some of these techniques could be applied for our class of problem. 
+
+
+% The challenge is to develop 
+% and are complementary. 
+
+The challenge is to apply demodularization strategies for security purposes to (1) external data operated by a program (e.g., as needs be in our case study); (2) adapt or generate the code in charge of accessing de-modularized data.  
+
+
+
+
+% software based on move refactoring, i.e. moving classes
+% between packages without changing any other aspect of the source
+% code.
+
+% \ma{It should be noted that some approaches advocate modularity for realizing security (out of the scope, but funny to notice)}

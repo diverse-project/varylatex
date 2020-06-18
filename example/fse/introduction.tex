@@ -1,0 +1,105 @@
+%From a software engineering perspective, modularity is undeniably good and remains a standing goal of any project~\cite{Parnas72,tarr1999}.
+%However, the modularity used as an architectural pattern to help the developer becomes bad if seen from a security point of view; a malicious attacker can too easily understand the overall architecture, locate and reason about critical concerns, and then reuse the modular parts. That is, modularity can dramatically ease and speed up the effort needed to reverse engineer a system. 
+%%
+%
+%The process of recovering a program's design usually includes module breakdowns, the identification of abstractions, control- and data-flows~\cite{byrne1991,canfora2011}. If everything is decomposed from the start, says with a clean object-oriented, component-based or aspect-oriented style, an outsider could immediately recover the implementation details of a system -- even a tool could automatically do the task~\cite{ceccato2014}. The same observation applies for \emph{external data} that a program has to manipulate. That is, a clean modularization of data is beneficial for software developers in charge of implementing the access and processing of data, can be useful for scaling up or out, but eases the task of an attacker.
+%% For example, an execution trace of the system would reflect this modularization with the rendering of the exchanges between objects and components, or the injections of cross-cutting aspects.  
+% From a security point of view, it is not acceptable. A quick and comprehensive discovery of secrets can lead an ill-disposed person motivated by wrongful or mischievous purposes to cause serious damages. 
+%% For instance, an attacker can 
+%
+%% \ma{Examples: OO, Bref, protocols}
+%
+%% As a result of a good modularity, the reverse engineering effort can be dramatically eased and speed up. 
+% 
+%% Modularity is as good for the same reasons it is bad from a security perspective. 
+% It thus seems that the modular qualities may sometimes backfire. 
+%Good when designing, testing, developing, maintaining, or re-engineering a system; bad when deploying or executing the application outside (e.g., in the Web). 
+%The exhibit of modularity, though desired, accidentally opens doors for attackers. 
+%The tension between the two points of view poses an evident problem and dilemma for developers. 
+%% 
+% A first radical attitude is to stop building modular applications when security does matter. 
+%Developers could consider changing their programming styles~\cite{lopes2014exercises} (e.g., through the use of monolithic code), design the application with anti-modular patterns, etc. It goes against any software engineering principles that have been long advocated and that practitioners are hopefully used to apply.
+%Another strategy, less radical and more realistic, is to consider that modularity imposes some tradeoffs. We can envision to lose, from a development perspective, some modularity properties with the intent of increasing security. 
+%
+%In fact, an ideal situation would be to keep the development modular and then to demodularize on purpose, at the right time (e.g., at compile time, or even at runtime), the application.  This requires to statically identify the modularization patterns helpful for an attacker, and to apply dedicated techniques to fade the modularity once it is no longer necessary. This paper argues that systematic methods and automated techniques should seamlessly support practitioners in demodularizing external data their programs have to access.   
+
+% \bc{design time: no decision in the spectrum and good practices... we change at compile time (definitely) or dynamically at run time...}
+
+% security    
+
+The engineering of a product line makes it possible to offer numerous configuration options (or features) and deliver unique products (or variants) to customers. Substantial profit is expected in terms of customer satisfaction, mass customization, market presence, \etc 
+% Numerous product line case studies have been developed, maintained, and have already shown technical benefits and strategic advantages against competitors. % in time to market, cost, and scalability. 
+%
+ But what do you give for free to your competitor when you exhibit a product line? 
+Hopefully nothing: the technical, software realization and the underlying business information of a product line should generally remain hidden to avoid loosing some economical edge.
+% to build a product line as well as the
+ In reality, it may happen that product lines jeopardize their trade secrets. 
+ % That is, an outsider could understand the variability realization and with that gain confidential business information or even direct economical benefit.  
+ For instance, an attacker or a competitor can identify hidden constraints and bypass the product line to get access to features or copyrighted data.
+
+ 
+ 
+ As a first concrete example, let us consider an online newspaper. (We use a real-world example, see Section~\ref{sec:casestudy1} for further details.) This newspaper freely delivers online news and articles to readers. In addition to this free content, there is a protected access for paying subscribers that allow them to read brand new content a few hours before it is made public. However, 
+ a naive implementation in the website of the newspaper allows a regular reader to access protected articles without paying. 
+ %
+ The code impacted is given after: 
+ \lstinputlisting[language=javascript, firstline=1]{lemonde.js}
+
+
+A user can change the user agent of her browser and avoid \emph{"articleBody"} to be replaced by the content of \emph{"articleBodyRestreint"}. Thereby, the user get access to the full content of the article for free.
+The major error is to delegate the checking to the client side, at the JavaScript level. The original intention was to offer a variant of the page to Web search engines in order to reference additional content. However the means to realize the \emph{variants} (for regular readers, for members, for different Web search engines) is highly questionable. It is too easy for an outsider to understand the product line and override functionalities of a certain variant.
+
+This example shows that a trade secret leaked by this naive implementation can have consequences: here the fact to give access for free to a non-member (hence loosing some money); one can also envision that a scrapper could automatically extract all protected content. 
+% \ma{more to say}
+ In fact, various other consequences are possible: a competitor could fully re-engineer a product line and then propose an improved one; technical or marketing constraints could be identified, analysed, and exploited to identify some weaknesses of the business of a product line; digital content under copyright and only accessible through a combination of (hidden) options might be extracted comprehensively, \etc
+% an attacker could grant new privileges and gain access to hidden features of a product line;   % a customer could activate or upgrade some features without paying; 
+ 
+ The first objective of this paper is to warn against possible naive modeling, implementation, and testing of variability leading to the existence of product lines\footnote{We are considering "product lines" in a broad sense, \ie software systems coming in different variants (like the newspapers), generators (like the video generator of Section~\ref{sec:casestudy2}), or configurable systems (like configurators, see Section~\ref{sec:casestudy4}).} that jeopardize their trade secrets.
+ %% maybe we can move this argumentation in Section 3
+ There are two kinds of trade secrets. First, the way a product line is realized: if discovered, the technical advantages are lost, a third-party can further re-exploit domain artefacts, \etc Second, the confidential information of a product line: it may be copyrighted content, a marketing practice, \etc The two secrets are related: the understanding or reverse engineering of the technical realization is usually necessary to collect sensible information.
+ % which is not generally known or reasonably ascertainable by others, and by which a business can obtain an economic advantage over competitors or customers
+% 
+  % for regular readers, members, journalists, web engine
+% Variability remains undoubtedly a standing goal of any project, making the promise of 
+ We present case studies in which the discovery and understanding of variability is possible and can lead to severe (economical) consequences.
+% \begin{itemize}
+% \item 
+ Section~\ref{sec:casestudy1} further details the case of online newspapers, showing other variability-based bugs.
+% \item 
+ Section~\ref{sec:casestudy2} describes an online generator of video variants in which protection of copyrighted data matters.
+%  software protection (frequency distribution, access to data); discovery of variability may kill the "surprise" effect and kill the interest of the generator
+ Section~\ref{sec:casestudy4} points out the protection issues faced by Web configurators.
+% \end{itemize} 
+
+% \item Section~\ref{sec:casestudy3} retrospectively reviews hacks of the family of Windows operating systems (XP, Vista, 7);
+
+
+% We also review techniques that can be used for protecting variability. 
+
+As a result, it is not enough to model, implement, and test a product line. 
+Our vision (hence the second major point of the paper) is that defensive methods and techniques should be developed to specifically protect variability and configurations. % -- or at least further complicate the task of an external actor.
+ We call to further investigate the protection perspective onto software variability, a topic quite absent in the software engineering and product line literature. Numerous techniques for software protection (\eg code obfuscation~\cite{collberg1997taxonomy}) have been considered, but the specificities of variability and configurations raise novel challenges. 
+ A malicious attacker should have difficulties to build mental abstractions, to identify and reason about variability, and to navigate into the configuration space. Otherwise the reverse engineering and the re-engineering of the product line is highly facilitated and can even be automated. 
+Section~\ref{sec:summary} summarizes our findings, discusses potential techniques for protecting variability, and outlines a research roadmap. 
+% 
+ 
+ 
+ % (2) practitioners developing configurable systems, generators, or product lines in which trade secrets might be discovered. 
+
+% practitioners should also think about defensive mechanisms for protecting variability. %  (hence the second point of the paper). 
+
+
+
+ 
+
+% protection of variability matters. 
+
+% Section~\ref{sec:related} reviews works capable of offering demodularizing mechanisms. % highlights open challenges, and 
+% Section~\ref{sec:conclusion} summarizes our vision. % and concludes the paper. 
+
+% We do not think so. 
+
+%The remainder of the paper is organized as follows. 
+% \emph{Remainder.}  describes the case study. % for which we have identified the problem.  
+% Section~\ref{sec:demodularizing} describes potential defensive solutions and discusses some tradeoffs.  
+
