@@ -46,10 +46,10 @@ def get_interval_width(interval, points_per_inch=72):
 
 def get_variable_def(k, v):
     """
-    \\def\fig1width{1}
+    \\defVal{name}{value}
     """
 
-    return fr"\def\{k}{{{v}}}"
+    return fr"\defVal{{{k}}}{{{v}}}"
 
 
 def write_variables(conf, tp):
