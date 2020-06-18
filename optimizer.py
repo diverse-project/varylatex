@@ -26,6 +26,9 @@ def create_temporary_copy(path):
 
     try:
         shutil.copytree(path, tmp_path)
+        macro_path = os.path.join(os.getcwd(), "macros.tex")
+        macro_copy_path = os.path.join(tmp_path, "macros.tex")
+        shutil.copyfile(macro_path, macro_copy_path)
     except:
         pass
 
