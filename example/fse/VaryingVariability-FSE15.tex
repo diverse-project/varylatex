@@ -227,12 +227,12 @@
 % 1st. author
 \alignauthor
 Mathieu Acher, Guillaume B\'{e}can, Benoit Combemale,\\ Benoit Baudry, and Jean-Marc J\'{e}z\'{e}quel\\
-        \ifVal{LONG_AFFILIATION}
+        \ifVal{LONG_AFFILIATION}{
         \affaddr{Inria - IRISA, University of Rennes 1, France}
-        \ifVal{EMAIL}
+        \ifVal{EMAIL}{
         \email{firstname.lastname@inria.fr}
-        \fi
-        \fi
+        }
+        }
 }
 % There's nothing stopping you putting the seventh, eighth, etc.
 % author on the opening page (as the 'third row') but we ask,
@@ -320,7 +320,7 @@ This example shows that a trade secret leaked by this naive implementation can h
  In fact, various other consequences are possible: a competitor could fully re-engineer a product line and then propose an improved one; technical or marketing constraints could be identified, analysed, and exploited to identify some weaknesses of the business of a product line; digital content under copyright and only accessible through a combination of (hidden) options might be extracted comprehensively, \etc
 % an attacker could grant new privileges and gain access to hidden features of a product line;   % a customer could activate or upgrade some features without paying; 
  
- The first objective of this paper is to warn against possible naive modeling, implementation, and testing of variability leading to the existence of product lines\ifVal{PL_FOOTNOTE}\footnote{We are considering "product lines" in a broad sense, \ie software systems coming in different variants (like the newspapers), generators (like the video generator of Section~\ref{sec:casestudy2}), or configurable systems (like configurators, see Section~\ref{sec:casestudy4}).}\fi that jeopardize their trade secrets.
+ The first objective of this paper is to warn against possible naive modeling, implementation, and testing of variability leading to the existence of product lines\ifVal{PL_FOOTNOTE}{\footnote{We are considering "product lines" in a broad sense, \ie software systems coming in different variants (like the newspapers), generators (like the video generator of Section~\ref{sec:casestudy2}), or configurable systems (like configurators, see Section~\ref{sec:casestudy4}).}} that jeopardize their trade secrets.
  %% maybe we can move this argumentation in Section 3
  There are two kinds of trade secrets. First, the way a product line is realized: if discovered, the technical advantages are lost, a third-party can further re-exploit domain artefacts, \etc Second, the confidential information of a product line: it may be copyrighted content, a marketing practice, \etc The two secrets are related: the understanding or reverse engineering of the technical realization is usually necessary to collect sensible information.
  % which is not generally known or reasonably ascertainable by others, and by which a business can obtain an economic advantage over competitors or customers
@@ -567,12 +567,12 @@ Another important lesson learned is that an attacker should have difficulties to
 \label{sec:conclusion}
 \input{conclusion.tex}
 
-\ifVal{ACK}
-\ifVal{BOLD_ACK}\textbf{Acknowledgements.}\fi
-\ifVal{PARAGRAPH_ACK}\paragraph{Acknowledgements}\fi We thank anonymous reviewers for their valuable feedbacks. % well-deserved! 
-\ifVal{LONG_ACK} We thank Pierre Laperdrix for the newspaper example. \fi
+\ifVal{ACK}{
+\ifVal{BOLD_ACK}{\textbf{Acknowledgements.}}
+\ifVal{PARAGRAPH_ACK}{\paragraph{Acknowledgements}} We thank anonymous reviewers for their valuable feedbacks. % well-deserved! 
+\ifVal{LONG_ACK}{We thank Pierre Laperdrix for the newspaper example. }
 % project fundings also
-\fi
+}
 %
 \scriptsize
 %\vspace*{-2mm}
