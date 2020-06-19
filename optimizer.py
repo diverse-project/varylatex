@@ -78,7 +78,9 @@ def compile_latex(filename):
         return True
 
 def page_count(pdf_path):
-    
+    """
+    Counts the number of pages in a PDF file
+    """
     document = fitz.open(pdf_path)
     return document.pageCount
 
@@ -116,5 +118,3 @@ if __name__ == "__main__":
     shutil.copyfile(os.path.join(temp_path, filename_pdf), os.path.join(base_path, filename_pdf))
 
     shutil.rmtree(temp_path)
-
-    print(page_count(os.path.join(base_path, filename_pdf)))
