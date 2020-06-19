@@ -1,8 +1,8 @@
-""" Code for blog post """
-
 import os
 import shutil
 import subprocess
+
+import fitz
 
 def create_temporary_copy(path):
     tmp_path = os.path.join(os.getcwd(), "source")
@@ -77,6 +77,11 @@ def compile_latex(filename):
     except subprocess.TimeoutExpired:
         return True
 
+def page_count(pdf_path):
+    
+    document = fitz.open(pdf_path)
+    return document.pageCount
+
 if __name__ == "__main__":
 
     base_path = os.getcwd()
@@ -111,3 +116,5 @@ if __name__ == "__main__":
     shutil.copyfile(os.path.join(temp_path, filename_pdf), os.path.join(base_path, filename_pdf))
 
     shutil.rmtree(temp_path)
+
+    print(page_count(os.path.join(base_path, filename_pdf)))
