@@ -36,10 +36,9 @@ def write_variables(conf, tp):
 
     with open(os.path.join(tp, "values.tex"), "w") as f:
         for k, v in conf.items():
-            if k.startswith("var-"):
-                macro = get_variable_def(k.replace("var-", ""), v)
-                if macro != "":
-                    f.write(f"{macro}\n")
+            macro = get_variable_def(k, v)
+            if macro != "":
+                f.write(f"{macro}\n")
 
 
 def compile_latex(filename):
@@ -95,14 +94,14 @@ def random_config(booleans = [], numbers = {}, enums = {}):
     """
     config = {}
     for boolean in booleans:
-        config["var-" + boolean] = random.choice([True, False])
+        config[boolean] = random.choice([True, False])
 
     for var_name, params in numbers.items():
         min, max, precision = params
-        config["var-" + var_name] = round(random.uniform(min, max), precision)
+        config[var_name] = round(random.uniform(min, max), precision)
     
     for var_name, choices in enums.items():
-        config["var-" + var_name] = random.choice(choices)
+        config[var_name] = random.choice(choices)
 
     return config
 
@@ -147,19 +146,19 @@ if __name__ == "__main__":
 
     filename = "VaryingVariability-FSE15"
 #    config = {
-#        "var-PL_FOOTNOTE": True,
-#        "var-ACK": True,
-#        "var-PARAGRAPH_ACK": True,
-#        "var-LONG_AFFILIATION": True,
-#        "var-EMAIL": False,
-#        "var-BOLD_ACK": False,
-#        "var-LONG_ACK": False,
+#        "PL_FOOTNOTE": True,
+#        "ACK": True,
+#        "PARAGRAPH_ACK": True,
+#        "LONG_AFFILIATION": True,
+#        "EMAIL": False,
+#        "BOLD_ACK": False,
+#        "LONG_ACK": False,
 #
-#        "var-vspace_bib": 4.32,
-#        "var-bref_size": 0.85,
-#        "var-cserver_size": 0.7,
+#        "vspace_bib": 4.32,
+#        "bref_size": 0.85,
+#        "cserver_size": 0.7,
 #
-#        "var-js_style": r"\tiny"
+#        "js_style": r"\tiny"
 #    }
     config = random_config(
         booleans = ["PL_FOOTNOTE", "ACK", "PARAGRAPH_ACK", "LONG_AFFILIATION", "EMAIL", "BOLD_ACK", "LONG_ACK"],
@@ -172,7 +171,7 @@ if __name__ == "__main__":
             "js_style": [r"\tiny", r"\scriptsize", r"\footnotesize"]
         }
     )
-    # config = {'var-PL_FOOTNOTE': True, 'var-ACK': False, 'var-PARAGRAPH_ACK': False, 'var-LONG_AFFILIATION': True, 'var-EMAIL': False, 'var-BOLD_ACK': True, 'var-LONG_ACK': False, 'var-vspace_bib': 4.77, 'var-bref_size': 1.0, 'var-cserver_size': 0.63, 'var-js_style': '\\scriptsize'}
+    # config = {'PL_FOOTNOTE': True, 'ACK': False, 'PARAGRAPH_ACK': False, 'LONG_AFFILIATION': True, 'EMAIL': False, 'BOLD_ACK': True, 'LONG_ACK': False, 'vspace_bib': 4.77, 'bref_size': 1.0, 'cserver_size': 0.63, 'js_style': '\\scriptsize'}
 
     print(config)
 
