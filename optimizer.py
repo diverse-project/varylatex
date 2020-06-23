@@ -5,6 +5,7 @@ import random
 
 import fitz
 from intervaltree import Interval, IntervalTree
+import pandas as pd
 
 def create_temporary_copy(path):
     tmp_path = os.path.join(os.getcwd(), "source")
@@ -133,11 +134,15 @@ def get_space(file_path, page_number = True):
     tree_y.remove(min(tree_y)) # Cannot optimize the space above the highest text block
     if page_number:
         tree_y.remove(max(tree_y)) # Cannot optimize the space under the page number
-    print(tree_y)
+        
     return max(i[1]-i[0] for i in tree_y)
 
 
 if __name__ == "__main__":
+
+    # ----------------------------------------
+    # Names and paths
+    # ----------------------------------------
 
     base_path = os.getcwd()
     document_path = os.path.join(base_path, "example", "fse")
@@ -145,21 +150,15 @@ if __name__ == "__main__":
     temp_path = create_temporary_copy(document_path)
 
     filename = "VaryingVariability-FSE15"
-#    config = {
-#        "PL_FOOTNOTE": True,
-#        "ACK": True,
-#        "PARAGRAPH_ACK": True,
-#        "LONG_AFFILIATION": True,
-#        "EMAIL": False,
-#        "BOLD_ACK": False,
-#        "LONG_ACK": False,
-#
-#        "vspace_bib": 4.32,
-#        "bref_size": 0.85,
-#        "cserver_size": 0.7,
-#
-#        "js_style": r"\tiny"
-#    }
+
+    filename_tex = filename + ".tex"
+    filename_pdf = filename + ".pdf"
+    tex_path = os.path.join(temp_path, filename_tex)
+    pdf_path = os.path.join(base_path, filename_pdf)
+
+    # ----------------------------------------
+    # Config generation
+    # ----------------------------------------
     config = random_config(
         booleans = ["PL_FOOTNOTE", "ACK", "PARAGRAPH_ACK", "LONG_AFFILIATION", "EMAIL", "BOLD_ACK", "LONG_ACK"],
         numbers = {
@@ -171,17 +170,34 @@ if __name__ == "__main__":
             "js_style": [r"\tiny", r"\scriptsize", r"\footnotesize"]
         }
     )
+    # Uncomment for fixed config
     # config = {'PL_FOOTNOTE': True, 'ACK': False, 'PARAGRAPH_ACK': False, 'LONG_AFFILIATION': True, 'EMAIL': False, 'BOLD_ACK': True, 'LONG_ACK': False, 'vspace_bib': 4.77, 'bref_size': 1.0, 'cserver_size': 0.63, 'js_style': '\\scriptsize'}
 
     print(config)
 
-    filename_tex = filename + ".tex"
-    filename_pdf = filename + ".pdf"
-
+    # ----------------------------------------
+    # PDF generation
+    # ----------------------------------------
     write_variables(config, temp_path)
-    file_path = os.path.join(temp_path, filename_tex)
 
-    compile_latex(file_path)
-    shutil.copyfile(os.path.join(temp_path, filename_pdf), os.path.join(base_path, filename_pdf))
+    compile_latex(tex_path)
+    shutil.copyfile(os.path.join(temp_path, filename_pdf), pdf_path)
 
     shutil.rmtree(temp_path)
+
+    # ----------------------------------------
+    # CSV printing
+    # ----------------------------------------
+
+    cols = list(config.keys()) + ["pages", "space"]
+    df = pd.DataFrame(columns = cols)
+
+    row = config.copy()
+    row["pages"] = page_count(pdf_path)
+    row["space"] = get_space(pdf_path)
+
+    df = df.append(row, ignore_index = True)
+
+    df.to_csv("result.csv", index=False)
+
+    
