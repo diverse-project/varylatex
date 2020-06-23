@@ -131,9 +131,11 @@ def get_space(file_path, page_number = True):
         _, y0, _, y1 = r
         tree_y.chop(y0,y1) # Takes away the non empty parts
 
-    tree_y.remove(min(tree_y)) # Cannot optimize the space above the highest text block
     if page_number:
-        tree_y.remove(max(tree_y)) # Cannot optimize the space under the page number
+        interval = max(tree_y)
+        return interval[1] - interval[0]
+
+    tree_y.remove(min(tree_y)) # Cannot optimize the space above the highest text block
 
     return max(i[1]-i[0] for i in tree_y)
 
