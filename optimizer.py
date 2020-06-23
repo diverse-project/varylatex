@@ -4,6 +4,7 @@ import subprocess
 import random
 
 import fitz
+from intervaltree import Interval, IntervalTree
 
 def create_temporary_copy(path):
     tmp_path = os.path.join(os.getcwd(), "source")
@@ -105,7 +106,36 @@ def random_config(booleans = [], numbers = {}, enums = {}):
 
     return config
 
+def get_space(file_path, page_number = True):
+    """
+    Gets the height (in pt) of the biggest empty area on the last page.
+    """
+    document = fitz.open(file_path)
+    lastPage = document[-1]
 
+    tree_y = IntervalTree() # Heights of the empty spaces
+    
+    blocks = lastPage.getTextBlocks() # Read text blocks
+
+    # Calculate CropBox and displacement
+    disp = fitz.Rect(lastPage.CropBoxPosition, lastPage.CropBoxPosition)
+
+    croprect = lastPage.rect + disp
+
+    tree_y.add(Interval(croprect[1], croprect[3]))
+
+    for b in blocks:
+        r = fitz.Rect(b[:4]) # block rectangle
+        r += disp
+
+        _, y0, _, y1 = r
+        tree_y.chop(y0,y1) # Takes away the non empty parts
+
+    tree_y.remove(min(tree_y)) # Cannot optimize the space above the highest text block
+    if page_number:
+        tree_y.remove(max(tree_y)) # Cannot optimize the space under the page number
+    print(tree_y)
+    return max(i[1]-i[0] for i in tree_y)
 
 
 if __name__ == "__main__":
@@ -156,5 +186,3 @@ if __name__ == "__main__":
     shutil.copyfile(os.path.join(temp_path, filename_pdf), os.path.join(base_path, filename_pdf))
 
     shutil.rmtree(temp_path)
-
-    
