@@ -134,46 +134,28 @@ def get_space(file_path, page_number = True):
     tree_y.remove(min(tree_y)) # Cannot optimize the space above the highest text block
     if page_number:
         tree_y.remove(max(tree_y)) # Cannot optimize the space under the page number
-        
+
     return max(i[1]-i[0] for i in tree_y)
 
 
-if __name__ == "__main__":
+def generate(booleans, numbers, enums, document_path, filename):
 
     # ----------------------------------------
     # Names and paths
     # ----------------------------------------
-
     base_path = os.getcwd()
-    document_path = os.path.join(base_path, "example", "fse")
-
     temp_path = create_temporary_copy(document_path)
-
-    filename = "VaryingVariability-FSE15"
-
     filename_tex = filename + ".tex"
     filename_pdf = filename + ".pdf"
     tex_path = os.path.join(temp_path, filename_tex)
     pdf_path = os.path.join(base_path, filename_pdf)
 
-    # ----------------------------------------
     # Config generation
-    # ----------------------------------------
     config = random_config(
-        booleans = ["PL_FOOTNOTE", "ACK", "PARAGRAPH_ACK", "LONG_AFFILIATION", "EMAIL", "BOLD_ACK", "LONG_ACK"],
-        numbers = {
-            "vspace_bib": (1, 5, 2),
-            "bref_size": (0.7, 1, 2),
-            "cserver_size": (0.6, 0.9, 2)
-        },
-        enums = {
-            "js_style": [r"\tiny", r"\scriptsize", r"\footnotesize"]
-        }
+        booleans = booleans, numbers = numbers, enums = enums
     )
     # Uncomment for fixed config
     # config = {'PL_FOOTNOTE': True, 'ACK': False, 'PARAGRAPH_ACK': False, 'LONG_AFFILIATION': True, 'EMAIL': False, 'BOLD_ACK': True, 'LONG_ACK': False, 'vspace_bib': 4.77, 'bref_size': 1.0, 'cserver_size': 0.63, 'js_style': '\\scriptsize'}
-
-    print(config)
 
     # ----------------------------------------
     # PDF generation
@@ -185,18 +167,39 @@ if __name__ == "__main__":
 
     shutil.rmtree(temp_path)
 
-    # ----------------------------------------
-    # CSV printing
-    # ----------------------------------------
-
-    cols = list(config.keys()) + ["pages", "space"]
-    df = pd.DataFrame(columns = cols)
-
     row = config.copy()
     row["pages"] = page_count(pdf_path)
     row["space"] = get_space(pdf_path)
 
-    df = df.append(row, ignore_index = True)
+    return row
+
+
+if __name__ == "__main__":
+
+    document_path = os.path.join(os.getcwd(), "example", "fse")
+    filename = "VaryingVariability-FSE15"
+
+    # ----------------------------------------
+    # Variables
+    # ----------------------------------------
+    
+    booleans = ["PL_FOOTNOTE", "ACK", "PARAGRAPH_ACK", "LONG_AFFILIATION", "EMAIL", "BOLD_ACK", "LONG_ACK"]
+    numbers = {
+        "vspace_bib": (1, 5, 2),
+        "bref_size": (0.7, 1, 2),
+        "cserver_size": (0.6, 0.9, 2)
+    }
+    enums = {
+        "js_style": [r"\tiny", r"\scriptsize", r"\footnotesize"]
+    }
+    
+    # DataFrame initialisation 
+    cols = booleans + list(numbers.keys()) + list(enums.keys()) + ["pages", "space"]
+    df = pd.DataFrame(columns = cols)
+
+    for i in range(10):
+        row = generate(booleans, numbers, enums, document_path, filename)
+        df = df.append(row, ignore_index = True)
 
     df.to_csv("result.csv", index=False)
 
