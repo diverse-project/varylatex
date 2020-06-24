@@ -10,7 +10,6 @@ import pandas as pd
 def create_temporary_copy(path):
     tmp_path = os.path.join(os.getcwd(), "source")
     #Path(tmp_path).mkdir(parents=True, exist_ok=True)
-
     try:
         shutil.copytree(path, tmp_path)
         macro_path = os.path.join(os.getcwd(), "macros.tex")
@@ -41,6 +40,37 @@ def write_variables(conf, tp):
             if macro != "":
                 f.write(f"{macro}\n")
 
+def generate_bbl(filename):
+    """
+    Loads the bibliography file
+    """
+    working_directory, texfile = os.path.split(filename)
+    
+    try:
+        # Precompile the main file to get the .aux file
+        command = ["pdflatex", "-draftmode", "-interaction=batchmode", texfile + ".tex"]
+        p1 = subprocess.Popen(
+            command, cwd=working_directory,
+            stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+            close_fds=True)
+        p1.wait(timeout=15)
+
+        # Load the bibtex references from the .aux
+        command = ["bibtex", texfile + ".aux"]
+        p2 = subprocess.Popen(
+            command, cwd=working_directory,
+            stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+            close_fds=True)
+        p2.wait(timeout=15)
+
+        if p1 is not None:
+            p1.kill()
+        if p2 is not None:
+            p2.kill()
+
+    except subprocess.TimeoutExpired:
+        pass
+
 
 def compile_latex(filename):
     """
@@ -50,29 +80,21 @@ def compile_latex(filename):
 
     working_directory, texfile = os.path.split(filename)
 
-    command = ["latexmk", "-C", texfile]
-
     try:
-        p1 = subprocess.Popen(
-            command, cwd=working_directory,
-            stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-            close_fds=True)
-        p1.wait(timeout=15)
 
-        command = ["latexmk", "-pdf", texfile]
-
-        p2 = subprocess.Popen(
+        # Compile the document
+        command = ["pdflatex", "-interaction=batchmode", texfile]
+        
+        p3 = subprocess.Popen(
             command, cwd=working_directory,
             stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
             close_fds=True)
 
-        p2.wait(timeout=15)
+        p3.wait(timeout=15)
 
-        # Clean up
-        if p1 is not None:
-            p1.kill()
-        if p2 is not None:
-            p2.kill()
+        
+        if p3 is not None:
+            p3.kill()
 
         return True
 
@@ -141,13 +163,13 @@ def get_space(file_path, page_number = True):
     return max(i[1]-i[0] for i in tree_y)
 
 
-def generate(booleans, numbers, enums, document_path, filename):
+def generate(booleans, numbers, enums, document_path, filename, temp_path):
 
     # ----------------------------------------
     # Names and paths
     # ----------------------------------------
     base_path = os.getcwd()
-    temp_path = create_temporary_copy(document_path)
+
     filename_tex = filename + ".tex"
     filename_pdf = filename + ".pdf"
     tex_path = os.path.join(temp_path, filename_tex)
@@ -168,8 +190,6 @@ def generate(booleans, numbers, enums, document_path, filename):
     compile_latex(tex_path)
     shutil.copyfile(os.path.join(temp_path, filename_pdf), pdf_path)
 
-    shutil.rmtree(temp_path)
-
     row = config.copy()
     row["pages"] = page_count(pdf_path)
     row["space"] = get_space(pdf_path)
@@ -181,6 +201,7 @@ if __name__ == "__main__":
 
     document_path = os.path.join(os.getcwd(), "example", "fse")
     filename = "VaryingVariability-FSE15"
+    temp_path = create_temporary_copy(document_path)
 
     # ----------------------------------------
     # Variables
@@ -200,10 +221,18 @@ if __name__ == "__main__":
     cols = booleans + list(numbers.keys()) + list(enums.keys()) + ["pages", "space"]
     df = pd.DataFrame(columns = cols)
 
-    for i in range(10):
-        row = generate(booleans, numbers, enums, document_path, filename)
+    generate_bbl(os.path.join(temp_path, filename))
+
+    for i in range(100):
+        row = generate(booleans, numbers, enums, document_path, filename, temp_path)
         df = df.append(row, ignore_index = True)
+        #print(f"Doc {i} generated")
+        
+
+    shutil.rmtree(temp_path)
 
     df.to_csv("result.csv", index=False)
+
+    
 
     
