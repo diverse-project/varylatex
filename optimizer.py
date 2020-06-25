@@ -230,7 +230,7 @@ if __name__ == "__main__":
         #print(f"Doc {i} generated")
         
 
-    # shutil.rmtree(temp_path)
+    shutil.rmtree(temp_path)
 
     df.to_csv("result.csv", index=False)
 
