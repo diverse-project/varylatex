@@ -106,7 +106,7 @@ def page_count(pdf_path):
     Counts the number of pages in a PDF file
     """
     document = fitz.open(pdf_path)
-    return document.pageCount
+    return int(document.pageCount)
 
 def random_config(booleans = [], numbers = {}, enums = {}):
     """
@@ -191,7 +191,7 @@ def generate(booleans, numbers, enums, document_path, filename, temp_path):
     shutil.copyfile(os.path.join(temp_path, filename_pdf), pdf_path)
 
     row = config.copy()
-    row["pages"] = page_count(pdf_path)
+    row["nbPages"] = page_count(pdf_path)
     row["space"] = get_space(pdf_path)
 
     return row
@@ -218,18 +218,19 @@ if __name__ == "__main__":
     }
     
     # DataFrame initialisation 
-    cols = booleans + list(numbers.keys()) + list(enums.keys()) + ["pages", "space"]
+    cols = booleans + list(numbers.keys()) + list(enums.keys()) + ["nbPages", "space", "idConfiguration"]
     df = pd.DataFrame(columns = cols)
 
     generate_bbl(os.path.join(temp_path, filename))
 
-    for i in range(100):
+    for i in range(300):
         row = generate(booleans, numbers, enums, document_path, filename, temp_path)
+        row["idConfiguration"] = i
         df = df.append(row, ignore_index = True)
         #print(f"Doc {i} generated")
         
 
-    shutil.rmtree(temp_path)
+    # shutil.rmtree(temp_path)
 
     df.to_csv("result.csv", index=False)
 
