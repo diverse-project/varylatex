@@ -223,7 +223,7 @@ if __name__ == "__main__":
 
     generate_bbl(os.path.join(temp_path, filename))
 
-    for i in range(300):
+    for i in range(10):
         row = generate(booleans, numbers, enums, document_path, filename, temp_path)
         row["idConfiguration"] = i
         df = df.append(row, ignore_index = True)
