@@ -7,6 +7,9 @@ import fitz
 from intervaltree import Interval, IntervalTree
 import pandas as pd
 
+
+import decision_trees.analysis as dt_al
+
 def create_temporary_copy(path):
     tmp_path = os.path.join(os.getcwd(), "source")
     #Path(tmp_path).mkdir(parents=True, exist_ok=True)
@@ -221,19 +224,48 @@ if __name__ == "__main__":
     cols = booleans + list(numbers.keys()) + list(enums.keys()) + ["nbPages", "space", "idConfiguration"]
     df = pd.DataFrame(columns = cols)
 
+    # LaTeX bbl pregeneration
     generate_bbl(os.path.join(temp_path, filename))
 
-    for i in range(10):
+    # ----------------------------------------
+    # PDF generation
+    # ----------------------------------------
+    for i in range(100):
         row = generate(booleans, numbers, enums, document_path, filename, temp_path)
         row["idConfiguration"] = i
         df = df.append(row, ignore_index = True)
-        #print(f"Doc {i} generated")
+        print(f"Doc {i} generated")
         
-
+    # Clean working directory
     shutil.rmtree(temp_path)
-
+    # Export results to CSV
     df.to_csv("result.csv", index=False)
 
+    # ----------------------------------------
+    # Decision Tree Analysis
+    # ----------------------------------------
+
+    # Percentage of the sample used to create the tree
+    # When using the tool we could use 100% of the data as we want the tree to be as precise as possible
+    perc = 80
+
+    # Here we could keep the previous df because it has the same values but we would need to manually set the types (object by default)
+    df = dt_al.load_csv("result.csv")
+    
+    # Replace string values by booleans with one-hot method
+    df, features = dt_al.refine_csv(df)
+    # Get the training sample size
+    sample = dt_al.get_sample_size(df, perc)
+    # Separate the data
+    train, test, y = dt_al.split_frame(df, features, sample)
+    # Create the Decision Tree classifier
+    dt = dt_al.create_dt(train, y, sample, min_samples_split = 4)
+    
+    # Only useful for testing, but we may use 100% of the data for training, and skip the computing of the accuracy
+    print("Accuracy :", dt.score(test, y[sample:]))
+
+    # Generate a .dot and a .png file of the tree
+    dt_al.visualize_tree(dt, features)
     
 
     
