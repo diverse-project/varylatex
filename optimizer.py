@@ -3,9 +3,13 @@ import shutil
 import subprocess
 import random
 
+from pathlib import Path
+
 import fitz
 from intervaltree import Interval, IntervalTree
 import pandas as pd
+
+import argparse
 
 
 import decision_trees.analysis as dt_al
@@ -15,11 +19,11 @@ def create_temporary_copy(path):
     #Path(tmp_path).mkdir(parents=True, exist_ok=True)
     try:
         shutil.copytree(path, tmp_path)
-        macro_path = os.path.join(os.getcwd(), "macros.tex")
+        macro_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], "macros.tex")
         macro_copy_path = os.path.join(tmp_path, "macros.tex")
         shutil.copyfile(macro_path, macro_copy_path)
     except:
-        pass
+        print("Error creating the temporary copy")
 
     return tmp_path
 
@@ -176,7 +180,7 @@ def generate(booleans, numbers, enums, document_path, filename, temp_path):
     filename_tex = filename + ".tex"
     filename_pdf = filename + ".pdf"
     tex_path = os.path.join(temp_path, filename_tex)
-    pdf_path = os.path.join(base_path, filename_pdf)
+    pdf_path = os.path.join(temp_path, filename_pdf)
 
     # Config generation
     config = random_config(
@@ -191,7 +195,7 @@ def generate(booleans, numbers, enums, document_path, filename, temp_path):
     write_variables(config, temp_path)
 
     compile_latex(tex_path)
-    shutil.copyfile(os.path.join(temp_path, filename_pdf), pdf_path)
+    # shutil.copyfile(os.path.join(temp_path, filename_pdf), pdf_path)
 
     row = config.copy()
     row["nbPages"] = page_count(pdf_path)
@@ -201,9 +205,17 @@ def generate(booleans, numbers, enums, document_path, filename, temp_path):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("filename", help="Name of the file you want to compile")
+    parser.add_argument("-s", "--source", default=os.getcwd(), help="Path of the LaTeX source folder")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Notifies when a PDF is generated")
+    parser.add_argument("-o", "--output", default=os.path.join(os.getcwd(), "output"), help = "The path of the output folder")
+    parser.add_argument("-g", "--generations", default=10, type=int, help="Amount of randomly generated configs used to generate the tree")
+    parser.add_argument("-ts", "--trainsize", default=100, type=int, help="Percentage of the generations used to train the tree (the rest is used to calculate the accuracy)")
+    args = parser.parse_args()
 
-    document_path = os.path.join(os.getcwd(), "example", "fse")
-    filename = "VaryingVariability-FSE15"
+    document_path = args.source
+    filename = args.filename.replace(".tex","")
     temp_path = create_temporary_copy(document_path)
 
     # ----------------------------------------
@@ -230,16 +242,20 @@ if __name__ == "__main__":
     # ----------------------------------------
     # PDF generation
     # ----------------------------------------
-    for i in range(100):
+    for i in range(args.generations):
         row = generate(booleans, numbers, enums, document_path, filename, temp_path)
         row["idConfiguration"] = i
         df = df.append(row, ignore_index = True)
-        print(f"Doc {i} generated")
+        if args.verbose:
+            print(f"Doc {i} generated")
         
     # Clean working directory
     shutil.rmtree(temp_path)
+    # Create the output directory
+    Path(args.output).mkdir(parents=True, exist_ok=True)
     # Export results to CSV
-    df.to_csv("result.csv", index=False)
+    result_path = os.path.join(args.output,"result.csv")
+    df.to_csv(result_path, index=False)
 
     # ----------------------------------------
     # Decision Tree Analysis
@@ -247,10 +263,10 @@ if __name__ == "__main__":
 
     # Percentage of the sample used to create the tree
     # When using the tool we could use 100% of the data as we want the tree to be as precise as possible
-    perc = 80
+    perc = args.trainsize
 
     # Here we could keep the previous df because it has the same values but we would need to manually set the types (object by default)
-    df = dt_al.load_csv("result.csv")
+    df = dt_al.load_csv(result_path)
     
     # Replace string values by booleans with one-hot method
     df, features = dt_al.refine_csv(df)
@@ -262,10 +278,11 @@ if __name__ == "__main__":
     dt = dt_al.create_dt(train, y, sample, min_samples_split = 4)
     
     # Only useful for testing, but we may use 100% of the data for training, and skip the computing of the accuracy
-    print("Accuracy :", dt.score(test, y[sample:]))
+    if perc < 100:
+        print("Accuracy :", dt.score(test, y[sample:]))
 
     # Generate a .dot and a .png file of the tree
-    dt_al.visualize_tree(dt, features)
+    dt_al.visualize_tree(dt, features, args.output)
     
 
     

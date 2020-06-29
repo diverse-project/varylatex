@@ -7,11 +7,13 @@ import subprocess
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 import pandas as pd
 
-def visualize_tree(tree, feature_names):
-    with open("dt.dot", 'w') as f:
+def visualize_tree(tree, feature_names, output_path):
+    dot_path = os.path.join(output_path, "dt.dot")
+    img_path = os.path.join(output_path, "dt.png")
+    with open(dot_path, 'w') as f:
         export_graphviz(tree, out_file=f,
                         feature_names=feature_names)
-    command = ["dot", "-Tpng", "dt.dot", "-o", "dt.png"]
+    command = ["dot", "-Tpng", dot_path, "-o", img_path]
     try:
         subprocess.check_call(command)
     except:
@@ -73,4 +75,4 @@ if __name__ == "__main__":
     train, test, y = split_frame(df, features, sample)
     dt = create_dt(train, y, sample)
     print("Accuracy :", dt.score(test, y[sample:]))
-    visualize_tree(dt, features)
+    visualize_tree(dt, features, ".")
