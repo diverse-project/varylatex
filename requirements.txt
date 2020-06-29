@@ -1,0 +1,4 @@
+intervaltree==3.0.2
+PyMuPDF==1.17.1
+scikit-learn==0.23.1
+pandas==1.0.5
