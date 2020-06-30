@@ -1,5 +1,6 @@
 import os
 import shutil
+from distutils.dir_util import copy_tree
 import subprocess
 import random
 
@@ -15,10 +16,10 @@ import argparse
 import decision_trees.analysis as dt_al
 
 def create_temporary_copy(path):
-    tmp_path = os.path.join(os.getcwd(), "source")
+    tmp_path = os.path.join(os.getcwd(), "build")
     #Path(tmp_path).mkdir(parents=True, exist_ok=True)
     try:
-        shutil.copytree(path, tmp_path)
+        copy_tree(path, tmp_path)
         macro_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], "macros.tex")
         macro_copy_path = os.path.join(tmp_path, "macros.tex")
         shutil.copyfile(macro_path, macro_copy_path)
@@ -170,13 +171,11 @@ def get_space(file_path, page_number = True):
     return max(i[1]-i[0] for i in tree_y)
 
 
-def generate(booleans, numbers, enums, document_path, filename, temp_path):
+def generate(booleans, numbers, enums, filename, temp_path):
 
     # ----------------------------------------
     # Names and paths
     # ----------------------------------------
-    base_path = os.getcwd()
-
     filename_tex = filename + ".tex"
     filename_pdf = filename + ".pdf"
     tex_path = os.path.join(temp_path, filename_tex)
@@ -207,7 +206,7 @@ def generate(booleans, numbers, enums, document_path, filename, temp_path):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("filename", help="Name of the file you want to compile")
-    parser.add_argument("-s", "--source", default=os.getcwd(), help="Path of the LaTeX source folder")
+    parser.add_argument("-s", "--source", default=os.path.join(os.getcwd(),"source"), help="Path of the LaTeX source folder")
     parser.add_argument("-v", "--verbose", action="store_true", help="Notifies when a PDF is generated")
     parser.add_argument("-o", "--output", default=os.path.join(os.getcwd(), "output"), help = "The path of the output folder")
     parser.add_argument("-g", "--generations", default=10, type=int, help="Amount of randomly generated configs used to generate the tree")
@@ -243,14 +242,18 @@ if __name__ == "__main__":
     # PDF generation
     # ----------------------------------------
     for i in range(args.generations):
-        row = generate(booleans, numbers, enums, document_path, filename, temp_path)
+        row = generate(booleans, numbers, enums, filename, temp_path)
         row["idConfiguration"] = i
         df = df.append(row, ignore_index = True)
         if args.verbose:
             print(f"Doc {i} generated")
         
     # Clean working directory
-    shutil.rmtree(temp_path)
+    for root, dirs, files in os.walk(temp_path):
+        for f in files:
+            os.unlink(os.path.join(root, f))
+        for d in dirs:
+            shutil.rmtree(os.path.join(root, d))
     # Create the output directory
     Path(args.output).mkdir(parents=True, exist_ok=True)
     # Export results to CSV

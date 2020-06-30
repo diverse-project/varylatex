@@ -1,12 +1,16 @@
 FROM python:3
 
-RUN apt update -y 
-RUN apt upgrade -y
+RUN apt-get update -y\
+ && apt-get install texlive-full -y\
+ && apt-get install graphviz -y\
+ && rm -rf /var/lib/apt/lists/*
+
 
 COPY . /varylatex
-
-RUN apt install texlive-full -y
-RUN apt install graphviz -y
-
 WORKDIR /varylatex
+
 RUN pip install -r requirements.txt
+
+VOLUME /varylatex/build
+
+CMD /bin/bash
