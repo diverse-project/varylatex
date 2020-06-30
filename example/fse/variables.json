@@ -1,0 +1,14 @@
+{
+    "booleans" : ["PL_FOOTNOTE", "ACK", "LONG_AFFILIATION", "EMAIL", "LONG_ACK"],
+    "numbers" : {
+        "vspace_bib": [1, 5, 2],
+        "bref_size": [0.7, 1, 2],
+        "cserver_size": [0.6, 0.9, 2]
+    },
+    "enums" : {
+        "js_style": ["\\tiny", "\\scriptsize", "\\footnotesize"]
+    },
+    "choices" : [
+        ["PARAGRAPH_ACK", "BOLD_ACK"]
+    ]
+}

@@ -3,6 +3,7 @@ import shutil
 from distutils.dir_util import copy_tree
 import subprocess
 import random
+import json
 
 from pathlib import Path
 
@@ -117,29 +118,35 @@ def page_count(pdf_path):
     document = fitz.open(pdf_path)
     return int(document.pageCount)
 
-def random_config(booleans = [], numbers = {}, enums = {}, choices = []):
+def random_config(conf_source):
     """
-    Generates a config dictionnary based on the range of values provided for each variable in the parameters.
+    Generates a config dictionnary based on the range of values provided from a dictionnary containing the following keys :
+    "booleans", "numbers", "enums" and "choices".
     Booleans are either true or false and only their names need to be specified.
     Numbers are represented with the variable name as the key, and a tuple (min_val, max_val, precision) as the value.
     Enums are variables that can have one value from a list provided as the value in the dictionnary.
     Choices are groups of booleans where exactly one can be true at a time. They are provided as a list of lists.
     """
     config = {}
-    for boolean in booleans:
-        config[boolean] = random.choice([True, False])
+    if "booleans" in conf_source:
+        for boolean in conf_source["booleans"]:
+            config[boolean] = random.choice([True, False])
 
-    for var_name, params in numbers.items():
-        min, max, precision = params
-        config[var_name] = round(random.uniform(min, max), precision)
+    if "numbers" in conf_source:
+        for var_name, params in conf_source["numbers"].items():
+            min, max, precision = params
+            config[var_name] = round(random.uniform(min, max), precision)
     
-    for var_name, options in enums.items():
-        config[var_name] = random.choice(options)
+    if "enums" in conf_source:
+        for var_name, options in conf_source["enums"].items():
+            config[var_name] = random.choice(options)
 
-    for options in choices:
-        selection = random.choice(options)
-        for o in options:
-            config[o] = o == selection
+    if "choices" in conf_source:
+        for options in conf_source["choices"]:
+            selection = random.choice(options)
+            for o in options:
+                config[o] = o == selection
+    
     return config
 
 def get_space(file_path, page_number = True):
@@ -177,7 +184,7 @@ def get_space(file_path, page_number = True):
     return max(i[1]-i[0] for i in tree_y)
 
 
-def generate(booleans, numbers, enums, choices, filename, temp_path):
+def generate(conf_source, filename, temp_path):
 
     # ----------------------------------------
     # Names and paths
@@ -188,9 +195,7 @@ def generate(booleans, numbers, enums, choices, filename, temp_path):
     pdf_path = os.path.join(temp_path, filename_pdf)
 
     # Config generation
-    config = random_config(
-        booleans = booleans, numbers = numbers, enums = enums, choices = choices
-    )
+    config = random_config(conf_source)
     # Uncomment for fixed config
     # config = {'PL_FOOTNOTE': True, 'ACK': False, 'PARAGRAPH_ACK': False, 'LONG_AFFILIATION': True, 'EMAIL': False, 'BOLD_ACK': True, 'LONG_ACK': False, 'vspace_bib': 4.77, 'bref_size': 1.0, 'cserver_size': 0.63, 'js_style': '\\scriptsize'}
 
@@ -226,23 +231,12 @@ if __name__ == "__main__":
     # ----------------------------------------
     # Variables
     # ----------------------------------------
-    
-    booleans = ["PL_FOOTNOTE", "ACK", "LONG_AFFILIATION", "EMAIL", "LONG_ACK"]
-    numbers = {
-        "vspace_bib": (1, 5, 2),
-        "bref_size": (0.7, 1, 2),
-        "cserver_size": (0.6, 0.9, 2)
-    }
-    enums = {
-        "js_style": [r"\tiny", r"\scriptsize", r"\footnotesize"]
-    }
+    conf_source_path = os.path.join(document_path, "variables.json")
+    with open(conf_source_path) as f:
+        conf_source = json.load(f)
 
-    choices = [
-        ["PARAGRAPH_ACK", "BOLD_ACK"]
-    ]
-    
     # DataFrame initialisation 
-    cols = booleans + list(numbers.keys()) + list(enums.keys()) + list(flatten(choices)) + ["nbPages", "space", "idConfiguration"]
+    cols = conf_source["booleans"] + list(conf_source["numbers"].keys()) + list(conf_source["enums"].keys()) + list(flatten(conf_source["choices"])) + ["nbPages", "space", "idConfiguration"]
     df = pd.DataFrame(columns = cols)
 
     # LaTeX bbl pregeneration
@@ -252,7 +246,7 @@ if __name__ == "__main__":
     # PDF generation
     # ----------------------------------------
     for i in range(args.generations):
-        row = generate(booleans, numbers, enums, choices, filename, temp_path)
+        row = generate(conf_source, filename, temp_path)
         row["idConfiguration"] = i
         df = df.append(row, ignore_index = True)
         if args.verbose:
