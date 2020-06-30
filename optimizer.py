@@ -9,6 +9,7 @@ from pathlib import Path
 import fitz
 from intervaltree import Interval, IntervalTree
 import pandas as pd
+from pandas.core.common import flatten
 
 import argparse
 
@@ -116,12 +117,13 @@ def page_count(pdf_path):
     document = fitz.open(pdf_path)
     return int(document.pageCount)
 
-def random_config(booleans = [], numbers = {}, enums = {}):
+def random_config(booleans = [], numbers = {}, enums = {}, choices = []):
     """
     Generates a config dictionnary based on the range of values provided for each variable in the parameters.
     Booleans are either true or false and only their names need to be specified.
     Numbers are represented with the variable name as the key, and a tuple (min_val, max_val, precision) as the value.
     Enums are variables that can have one value from a list provided as the value in the dictionnary.
+    Choices are groups of booleans where exactly one can be true at a time. They are provided as a list of lists.
     """
     config = {}
     for boolean in booleans:
@@ -131,9 +133,13 @@ def random_config(booleans = [], numbers = {}, enums = {}):
         min, max, precision = params
         config[var_name] = round(random.uniform(min, max), precision)
     
-    for var_name, choices in enums.items():
-        config[var_name] = random.choice(choices)
+    for var_name, options in enums.items():
+        config[var_name] = random.choice(options)
 
+    for options in choices:
+        selection = random.choice(options)
+        for o in options:
+            config[o] = o == selection
     return config
 
 def get_space(file_path, page_number = True):
@@ -171,7 +177,7 @@ def get_space(file_path, page_number = True):
     return max(i[1]-i[0] for i in tree_y)
 
 
-def generate(booleans, numbers, enums, filename, temp_path):
+def generate(booleans, numbers, enums, choices, filename, temp_path):
 
     # ----------------------------------------
     # Names and paths
@@ -183,7 +189,7 @@ def generate(booleans, numbers, enums, filename, temp_path):
 
     # Config generation
     config = random_config(
-        booleans = booleans, numbers = numbers, enums = enums
+        booleans = booleans, numbers = numbers, enums = enums, choices = choices
     )
     # Uncomment for fixed config
     # config = {'PL_FOOTNOTE': True, 'ACK': False, 'PARAGRAPH_ACK': False, 'LONG_AFFILIATION': True, 'EMAIL': False, 'BOLD_ACK': True, 'LONG_ACK': False, 'vspace_bib': 4.77, 'bref_size': 1.0, 'cserver_size': 0.63, 'js_style': '\\scriptsize'}
@@ -221,7 +227,7 @@ if __name__ == "__main__":
     # Variables
     # ----------------------------------------
     
-    booleans = ["PL_FOOTNOTE", "ACK", "PARAGRAPH_ACK", "LONG_AFFILIATION", "EMAIL", "BOLD_ACK", "LONG_ACK"]
+    booleans = ["PL_FOOTNOTE", "ACK", "LONG_AFFILIATION", "EMAIL", "LONG_ACK"]
     numbers = {
         "vspace_bib": (1, 5, 2),
         "bref_size": (0.7, 1, 2),
@@ -230,9 +236,13 @@ if __name__ == "__main__":
     enums = {
         "js_style": [r"\tiny", r"\scriptsize", r"\footnotesize"]
     }
+
+    choices = [
+        ["PARAGRAPH_ACK", "BOLD_ACK"]
+    ]
     
     # DataFrame initialisation 
-    cols = booleans + list(numbers.keys()) + list(enums.keys()) + ["nbPages", "space", "idConfiguration"]
+    cols = booleans + list(numbers.keys()) + list(enums.keys()) + list(flatten(choices)) + ["nbPages", "space", "idConfiguration"]
     df = pd.DataFrame(columns = cols)
 
     # LaTeX bbl pregeneration
@@ -242,11 +252,12 @@ if __name__ == "__main__":
     # PDF generation
     # ----------------------------------------
     for i in range(args.generations):
-        row = generate(booleans, numbers, enums, filename, temp_path)
+        row = generate(booleans, numbers, enums, choices, filename, temp_path)
         row["idConfiguration"] = i
         df = df.append(row, ignore_index = True)
         if args.verbose:
             print(f"Doc {i} generated")
+
         
     # Clean working directory
     for root, dirs, files in os.walk(temp_path):
