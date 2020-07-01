@@ -16,6 +16,7 @@ import argparse
 
 
 import decision_trees.analysis as dt_al
+import overleaf_util as over
 
 def create_temporary_copy(path):
     tmp_path = os.path.join(os.getcwd(), "build")
@@ -213,6 +214,15 @@ def generate(conf_source, filename, temp_path):
 
     return row
 
+def clear_directory(path):
+    """
+    Removes the content of a directory without removing the directory itself
+    """
+    for root, dirs, files in os.walk(path):
+        for f in files:
+            os.unlink(os.path.join(root, f))
+        for d in dirs:
+            shutil.rmtree(os.path.join(root, d))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -222,11 +232,18 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output", default=os.path.join(os.getcwd(), "output"), help = "The path of the output folder")
     parser.add_argument("-g", "--generations", default=10, type=int, help="Amount of randomly generated configs used to generate the tree")
     parser.add_argument("-ts", "--trainsize", default=100, type=int, help="Percentage of the generations used to train the tree (the rest is used to calculate the accuracy)")
+    parser.add_argument("-ol", "--overleaf", help="Key of the readonly link of the project on Overleaf (the letters avter '/read/'). It needs to have a 'values.json' file and the document must include 'macros' and 'values'")
     args = parser.parse_args()
 
     document_path = args.source
     filename = args.filename.replace(".tex","")
+
+    if (args.overleaf):
+        clear_directory(document_path)
+        over.fetch_overleaf(args.overleaf, document_path)
+
     temp_path = create_temporary_copy(document_path)
+
 
     # ----------------------------------------
     # Variables
@@ -254,11 +271,7 @@ if __name__ == "__main__":
 
         
     # Clean working directory
-    for root, dirs, files in os.walk(temp_path):
-        for f in files:
-            os.unlink(os.path.join(root, f))
-        for d in dirs:
-            shutil.rmtree(os.path.join(root, d))
+    clear_directory(temp_path)
     # Create the output directory
     Path(args.output).mkdir(parents=True, exist_ok=True)
     # Export results to CSV
@@ -291,6 +304,6 @@ if __name__ == "__main__":
 
     # Generate a .dot and a .png file of the tree
     dt_al.visualize_tree(dt, features, args.output)
-    
+
 
     
