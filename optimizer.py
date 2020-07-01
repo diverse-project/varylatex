@@ -185,8 +185,10 @@ def get_space(file_path, page_number = True):
     return max(i[1]-i[0] for i in tree_y)
 
 
-def generate(conf_source, filename, temp_path):
-
+def generate(config, filename, temp_path):
+    """
+    Builds a PDF with the values defined in config
+    """
     # ----------------------------------------
     # Names and paths
     # ----------------------------------------
@@ -196,9 +198,6 @@ def generate(conf_source, filename, temp_path):
     pdf_path = os.path.join(temp_path, filename_pdf)
 
     # Config generation
-    config = random_config(conf_source)
-    # Uncomment for fixed config
-    # config = {'PL_FOOTNOTE': True, 'ACK': False, 'PARAGRAPH_ACK': False, 'LONG_AFFILIATION': True, 'EMAIL': False, 'BOLD_ACK': True, 'LONG_ACK': False, 'vspace_bib': 4.77, 'bref_size': 1.0, 'cserver_size': 0.63, 'js_style': '\\scriptsize'}
 
     # ----------------------------------------
     # PDF generation
@@ -213,6 +212,14 @@ def generate(conf_source, filename, temp_path):
     row["space"] = get_space(pdf_path)
 
     return row
+
+def generate_random(conf_source, filename, temp_path):
+    """
+    Builds a PDF from a random config based on conf_source
+    """
+    config = random_config(conf_source)
+    return generate(config, filename, temp_path)
+
 
 def clear_directory(path):
     """
@@ -233,6 +240,7 @@ if __name__ == "__main__":
     parser.add_argument("-g", "--generations", default=10, type=int, help="Amount of randomly generated configs used to generate the tree")
     parser.add_argument("-ts", "--trainsize", default=100, type=int, help="Percentage of the generations used to train the tree (the rest is used to calculate the accuracy)")
     parser.add_argument("-ol", "--overleaf", help="Key of the readonly link of the project on Overleaf (the letters avter '/read/'). It needs to have a 'values.json' file and the document must include 'macros' and 'values'")
+    parser.add_argument("-c", "--config", help="Generate a specific PDF from a config JSON string")
     args = parser.parse_args()
 
     document_path = args.source
@@ -262,12 +270,17 @@ if __name__ == "__main__":
     # ----------------------------------------
     # PDF generation
     # ----------------------------------------
-    for i in range(args.generations):
-        row = generate(conf_source, filename, temp_path)
-        row["idConfiguration"] = i
-        df = df.append(row, ignore_index = True)
-        if args.verbose:
-            print(f"Doc {i} generated")
+    if args.config:
+        row = generate(json.loads(args.config), filename, temp_path)
+        pdf_name = filename+".pdf"
+        shutil.copyfile(os.path.join(temp_path, pdf_name), os.path.join(args.output, pdf_name))
+    else:
+        for i in range(args.generations):
+            row = generate_random(conf_source, filename, temp_path)
+            row["idConfiguration"] = i
+            df = df.append(row, ignore_index = True)
+            if args.verbose:
+                print(f"Doc {i} generated")
 
         
     # Clean working directory
@@ -281,7 +294,8 @@ if __name__ == "__main__":
     # ----------------------------------------
     # Decision Tree Analysis
     # ----------------------------------------
-
+    if args.config:
+        exit() # Not useful for single generation
     # Percentage of the sample used to create the tree
     # When using the tool we could use 100% of the data as we want the tree to be as precise as possible
     perc = args.trainsize
