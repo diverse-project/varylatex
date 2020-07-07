@@ -12,7 +12,11 @@ def visualize_tree(tree, feature_names, output_path):
     img_path = os.path.join(output_path, "dt.png")
     with open(dot_path, 'w') as f:
         export_graphviz(tree, out_file=f,
-                        feature_names=feature_names)
+                        feature_names=feature_names,
+                        filled=True,
+                        special_characters=True,
+                        rounded=True,
+                        class_names=list(map(str,tree.classes_)))
     command = ["dot", "-Tpng", dot_path, "-o", img_path]
     try:
         subprocess.check_call(command)

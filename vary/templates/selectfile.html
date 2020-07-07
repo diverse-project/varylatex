@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename = 'js/selectfile.js')}}"></script>
+{% endblock %}
+
+{% block body %}
+<h1>{{name}}</h1>
+<h2>Select the main file of the project</h2>
+<form action="/results" method="GET">
+    <select id="file_select" name="filename" onchange="selection_changed()">
+        <option style="display: none;">Select file name</option>
+    </select>
+    <input type="submit" id="submit" value="Select">
+</form>
+{% endblock %}

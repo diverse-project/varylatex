@@ -1,35 +1,13 @@
 import os
 import shutil
-from distutils.dir_util import copy_tree
 import subprocess
 import random
 import json
 
-from pathlib import Path
-
 import fitz
 from intervaltree import Interval, IntervalTree
-import pandas as pd
-from pandas.core.common import flatten
 
-import argparse
-
-
-import decision_trees.analysis as dt_al
-import overleaf_util as over
-
-def create_temporary_copy(path):
-    tmp_path = os.path.join(os.getcwd(), "build")
-    #Path(tmp_path).mkdir(parents=True, exist_ok=True)
-    try:
-        copy_tree(path, tmp_path)
-        macro_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], "macros.tex")
-        macro_copy_path = os.path.join(tmp_path, "macros.tex")
-        shutil.copyfile(macro_path, macro_copy_path)
-    except:
-        print("Error creating the temporary copy")
-
-    return tmp_path
+import vary.model.decision_trees.analysis as dt_al
 
 def get_variable_def(k, v):
     """
@@ -221,87 +199,10 @@ def generate_random(conf_source, filename, temp_path):
     return generate(config, filename, temp_path)
 
 
-def clear_directory(path):
-    """
-    Removes the content of a directory without removing the directory itself
-    """
-    for root, dirs, files in os.walk(path):
-        for f in files:
-            os.unlink(os.path.join(root, f))
-        for d in dirs:
-            shutil.rmtree(os.path.join(root, d))
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("filename", help="Name of the file you want to compile")
-    parser.add_argument("-s", "--source", default=os.path.join(os.getcwd(),"source"), help="Path of the LaTeX source folder")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Notifies when a PDF is generated")
-    parser.add_argument("-o", "--output", default=os.path.join(os.getcwd(), "output"), help = "The path of the output folder")
-    parser.add_argument("-g", "--generations", default=10, type=int, help="Amount of randomly generated configs used to generate the tree")
-    parser.add_argument("-ts", "--trainsize", default=100, type=int, help="Percentage of the generations used to train the tree (the rest is used to calculate the accuracy)")
-    parser.add_argument("-ol", "--overleaf", help="Key of the readonly link of the project on Overleaf (the letters avter '/read/'). It needs to have a 'values.json' file and the document must include 'macros' and 'values'")
-    parser.add_argument("-c", "--config", help="Generate a specific PDF from a config JSON string")
-    args = parser.parse_args()
-
-    document_path = args.source
-    filename = args.filename.replace(".tex","")
-
-    if (args.overleaf):
-        clear_directory(document_path)
-        over.fetch_overleaf(args.overleaf, document_path)
-
-    temp_path = create_temporary_copy(document_path)
-
-
-    # ----------------------------------------
-    # Variables
-    # ----------------------------------------
-    conf_source_path = os.path.join(document_path, "variables.json")
-    with open(conf_source_path) as f:
-        conf_source = json.load(f)
-
-    # DataFrame initialisation 
-    cols = conf_source["booleans"] + list(conf_source["numbers"].keys()) + list(conf_source["enums"].keys()) + list(flatten(conf_source["choices"])) + ["nbPages", "space", "idConfiguration"]
-    df = pd.DataFrame(columns = cols)
-
-    # LaTeX bbl pregeneration
-    generate_bbl(os.path.join(temp_path, filename))
-
-    # ----------------------------------------
-    # PDF generation
-    # ----------------------------------------
-    if args.config:
-        row = generate(json.loads(args.config), filename, temp_path)
-        pdf_name = filename+".pdf"
-        shutil.copyfile(os.path.join(temp_path, pdf_name), os.path.join(args.output, pdf_name))
-    else:
-        for i in range(args.generations):
-            row = generate_random(conf_source, filename, temp_path)
-            row["idConfiguration"] = i
-            df = df.append(row, ignore_index = True)
-            if args.verbose:
-                print(f"Doc {i} generated")
-
-        
-    # Clean working directory
-    clear_directory(temp_path)
-    # Create the output directory
-    Path(args.output).mkdir(parents=True, exist_ok=True)
-    # Export results to CSV
-    result_path = os.path.join(args.output,"result.csv")
-    df.to_csv(result_path, index=False)
-
-    # ----------------------------------------
-    # Decision Tree Analysis
-    # ----------------------------------------
-    if args.config:
-        exit() # Not useful for single generation
-    # Percentage of the sample used to create the tree
-    # When using the tool we could use 100% of the data as we want the tree to be as precise as possible
-    perc = args.trainsize
+def decision_tree(csv_path, perc=100, output_path=None):
 
     # Here we could keep the previous df because it has the same values but we would need to manually set the types (object by default)
-    df = dt_al.load_csv(result_path)
+    df = dt_al.load_csv(csv_path)
     
     # Replace string values by booleans with one-hot method
     df, features = dt_al.refine_csv(df)
@@ -316,8 +217,8 @@ if __name__ == "__main__":
     if perc < 100:
         print("Accuracy :", dt.score(test, y[sample:]))
 
-    # Generate a .dot and a .png file of the tree
-    dt_al.visualize_tree(dt, features, args.output)
+    # Generate a .dot and a .png file of the tree if there is an output path
+    if output_path:
+        dt_al.visualize_tree(dt, features, output_path)
 
-
-    
+    return dt

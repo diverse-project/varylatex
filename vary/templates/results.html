@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<style>
+    table {
+        border-collapse: collapse;
+        border: 2px black solid;
+        font: 12px sans-serif;
+    }
+
+    td {
+        border: 1px black solid;
+        padding: 5px;
+    }
+</style>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename = 'js/load_project.js')}}"></script>
+{% endblock %}
+
+{% block body %}
+<h1>{{name}}</h1>
+<table></table>
+<img id="tree_img">
+{% endblock %}
