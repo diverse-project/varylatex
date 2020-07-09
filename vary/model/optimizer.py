@@ -13,7 +13,7 @@ def get_variable_def(k, v):
     """
     \\defVal{name}{value}
     """
-    if v == False:
+    if v == False or v == "False":
         return ""
     if v == True:
         return fr"\defVal{{{k}}}{{}}"
@@ -51,7 +51,6 @@ def generate_bbl(filename):
             stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
             close_fds=True)
         p2.wait(timeout=15)
-
         if p1 is not None:
             p1.kill()
         if p2 is not None:
@@ -80,10 +79,18 @@ def compile_latex(filename):
             close_fds=True)
 
         p3.wait(timeout=15)
+        # We need two runs for the references
+        p4 = subprocess.Popen(
+            command, cwd=working_directory,
+            stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+            close_fds=True)
 
+        p4.wait(timeout=15)
         
         if p3 is not None:
             p3.kill()
+        if p4 is not None:
+            p4.kill()
 
         return True
 
@@ -184,7 +191,7 @@ def generate(config, filename, temp_path):
 
     compile_latex(tex_path)
     # shutil.copyfile(os.path.join(temp_path, filename_pdf), pdf_path)
-
+    
     row = config.copy()
     row["nbPages"] = page_count(pdf_path)
     row["space"] = get_space(pdf_path)

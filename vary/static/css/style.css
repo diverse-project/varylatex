@@ -1,0 +1,19 @@
+h1 {
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+    font: 12px sans-serif;
+    overflow-y: auto;
+}
+
+th, td {
+    border: 1px black solid;
+    padding: 5px;
+}
+
+.message {
+    height: 30px;
+    text-align: center;
+}

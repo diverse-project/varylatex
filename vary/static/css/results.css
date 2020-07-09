@@ -1,0 +1,22 @@
+/* Centering */
+.table-container, .pdf, .gen-options {
+    margin: 5px auto;
+    display: block;
+}
+
+/* Scrollable container for a table */
+.table-container{
+    width: 70%;
+    max-height: 300px;
+    overflow: scroll;
+    border: 2px black solid;
+}
+
+.pdf {
+    width: 800px;
+    height: 1100px;
+}
+
+.gen-options {
+    text-align: center;
+}

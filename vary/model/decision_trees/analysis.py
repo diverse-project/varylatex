@@ -29,7 +29,7 @@ def load_csv(csv_path):
     """
     Creates a dataframe based on the CSV path
     """
-    return pd.read_csv(csv_path, index_col=-1)
+    return pd.read_csv(csv_path, index_col = 0)
 
 def refine_csv(df):
     """

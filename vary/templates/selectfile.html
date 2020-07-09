@@ -8,7 +8,7 @@
 {% block body %}
 <h1>{{name}}</h1>
 <h2>Select the main file of the project</h2>
-<form action="/results" method="GET">
+<form action="/selectfile" method="POST">
     <select id="file_select" name="filename" onchange="selection_changed()">
         <option style="display: none;">Select file name</option>
     </select>

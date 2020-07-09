@@ -69,7 +69,7 @@ if __name__ == "__main__":
     Path(args.output).mkdir(parents=True, exist_ok=True)
     # Export results to CSV
     result_path = os.path.join(args.output,"result.csv")
-    df.to_csv(result_path, index=False)
+    df.to_csv(result_path)
 
     # ----------------------------------------
     # Decision Tree Analysis
