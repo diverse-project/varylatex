@@ -1,9 +1,10 @@
-# from bs4 import BeautifulSoup # Useful if we use an accoun t or retrieve the CSRF token from the login page
+# from bs4 import BeautifulSoup # Useful if we use an account or retrieve the CSRF token from the login page
 import requests
 import re
 import json
 import zipfile
 import os
+
 
 def fetch_overleaf(invite_key, output_folder):
     """
@@ -11,14 +12,13 @@ def fetch_overleaf(invite_key, output_folder):
     """
 
     if not re.match("[a-z]+", invite_key):
-        os.write(2, b"This is not a valid invite key. The invite key is the group of letters after the '/read/' in the read-only link\n")
+        os.write(2, b"This is not a valid invite key. The invite key is the group of letters " +
+                    b"after the '/read/' in the read-only link\n")
         exit()
 
     invite_url = "https://www.overleaf.com/read/" + invite_key
     grant_url = invite_url + "/grant"
     session = requests.Session()
-
-
 
     # Login
     # Not necessary unless you want to import a project with a read / write link
@@ -41,7 +41,7 @@ def fetch_overleaf(invite_key, output_folder):
         "Content-Type": "application/json;charset=utf-8",
         "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:77.0) Gecko/20100101 Firefox/77.0",
         "Host": "www.overleaf.com",
-        "Origin" : "https://www.overleaf.com",
+        "Origin": "https://www.overleaf.com",
         "TE": "Trailers",
         "Content-Length": "48"
     }
@@ -60,9 +60,9 @@ def fetch_overleaf(invite_key, output_folder):
     # POST request that allows the user to access the document
     r = session.post(
         grant_url,
-        data = data,
-        cookies = session.cookies,
-        headers = headers
+        data=data,
+        cookies=session.cookies,
+        headers=headers
     )
 
     # Real path of the project
@@ -79,7 +79,7 @@ def fetch_overleaf(invite_key, output_folder):
                 f.write(chunk)
 
     # Extract the file to the specified folder
-    with zipfile.ZipFile("sources.zip","r") as zip_ref:
+    with zipfile.ZipFile("sources.zip", "r") as zip_ref:
         zip_ref.extractall(output_folder)
 
     # Clean the archive

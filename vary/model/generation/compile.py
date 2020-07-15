@@ -2,6 +2,7 @@ import os
 import subprocess
 from vary.model.generation.subcall import run_command
 
+
 def generate_bbl(filepath):
     """
     Loads the bibliography file

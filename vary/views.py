@@ -16,10 +16,11 @@ from pandas.core.common import flatten
 
 from vary import app
 from vary.model.files import check_filename, create_temporary_copy, clear_directory
-from vary.model.generation.generate import generate_random, generate
+from vary.model.generation.generate import generate_random, generate_pdf
 from vary.model.generation.compile import generate_bbl
 from vary.model.decision_trees.analysis import decision_tree
 from vary.model.overleaf_util import fetch_overleaf
+
 
 @app.route('/', methods=["GET","POST"])
 def index():
@@ -51,11 +52,13 @@ def index():
     else:
         return render_template('index.html')
 
+
 @app.route('/import_overleaf', methods=['POST'])
 def import_overleaf():
     key = request.form.get('key')
     fetch_overleaf(key, app.config['UPLOAD_FOLDER'])
     return redirect(url_for('selectfile'))
+
 
 @app.route('/selectfile', methods = ["GET", "POST"])
 def selectfile():
@@ -66,23 +69,25 @@ def selectfile():
         name = session['project_name']
         return render_template('selectfile.html', name=name)
 
+
 @app.route('/results')
 def results():
     name = session['project_name']
     return render_template("results.html", name=name)
+
 
 @app.route('/compile/<int:generations>', methods=["POST"])
 @app.route('/compile/<int:generations>/<reset>', methods=["POST"])
 def compile(generations, reset=True):
     output = "vary/results"
     
-    filename = session['main_file_name'].replace(".tex","") # main file file name without extention
+    filename = session['main_file_name'].replace(".tex", "")  # main file file name without extension
 
-    source = os.path.join(app.config['UPLOAD_FOLDER']) # The project is located in the "source" folder
+    source = os.path.join(app.config['UPLOAD_FOLDER'])  # The project is located in the "source" folder
 
-    temp_path = create_temporary_copy(source) # Create the temporary working directory
+    temp_path = create_temporary_copy(source)  # Create the temporary working directory
 
-    generate_bbl(os.path.join(temp_path, filename)) # LaTeX bbl pregeneration
+    generate_bbl(os.path.join(temp_path, filename))  # LaTeX bbl pregeneration
     
     # Load the variables
     conf_source_path = os.path.join(source, "variables.json")
@@ -90,21 +95,24 @@ def compile(generations, reset=True):
         conf_source = json.load(f)
 
     # DataFrame initialisation
-    csv_result_path = os.path.join(output,"result.csv")
+    csv_result_path = os.path.join(output, "result.csv")
 
     if reset == True:
-        cols = conf_source["booleans"] + list(conf_source["numbers"].keys()) + list(conf_source["enums"].keys()) + list(flatten(conf_source["choices"])) + ["nbPages", "space"]
-        df = pd.DataFrame(columns = cols)
+        cols = conf_source["booleans"]\
+               + list(conf_source["numbers"].keys())\
+               + list(conf_source["enums"].keys())\
+               + list(flatten(conf_source["choices"]))\
+               + ["nbPages", "space"]
+        df = pd.DataFrame(columns=cols)
     else:
         df = pd.read_csv(csv_result_path, index_col=0)
 
     for i in range(generations):
         row = generate_random(conf_source, filename, temp_path)
-        df = df.append(row, ignore_index = True)
+        df = df.append(row, ignore_index=True)
 
     # Clean working directory
     clear_directory(os.path.dirname(temp_path))
-
 
     # Create the output directory
     Path(output).mkdir(parents=True, exist_ok=True)
@@ -113,6 +121,7 @@ def compile(generations, reset=True):
     decision_tree(csv_result_path, output_path=output)
 
     return send_from_directory("results","result.csv")
+
 
 @app.route('/build_pdf', methods=['GET','POST'])
 def build_pdf():
@@ -128,7 +137,7 @@ def build_pdf():
     temp_path = create_temporary_copy(source)
     generate_bbl(os.path.join(temp_path, filename))
 
-    generate(config, filename, temp_path)
+    generate_pdf(config, filename, temp_path)
     
     outpath = os.path.join(output, filename + ".pdf") 
     if os.path.exists(outpath):
@@ -138,14 +147,15 @@ def build_pdf():
         os.path.join(outpath)
     )
     print(config)
-    #clear_directory(os.path.dirname(temp_path))
-    return '{"success":true}', 200, {'ContentType':'application/json'}
+    return '{"success":true}', 200, {'ContentType': 'application/json'}
+
 
 @app.route('/tree_img')
 def get_tree():
     response = send_from_directory("results",'dt.png')
     response.headers['Cache-Control'] = 'no-store'
     return response
+
 
 @app.route('/filenames')
 def get_filenames():

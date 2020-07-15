@@ -1,7 +1,7 @@
 import os
 import shutil
-from distutils.dir_util import copy_tree
 from vary import ALLOWED_EXTENSIONS
+
 
 def check_filename(filename):
     """
@@ -9,6 +9,7 @@ def check_filename(filename):
     """
     return "." in filename and \
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def clear_directory(path):
     """
@@ -20,6 +21,7 @@ def clear_directory(path):
         for d in dirs:
             shutil.rmtree(os.path.join(root, d))
 
+
 def create_temporary_copy(path):
     tmp_path = os.path.join(os.path.dirname(path), "build/latex")
     try:
@@ -27,7 +29,7 @@ def create_temporary_copy(path):
         macro_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], "macros.tex")
         macro_copy_path = os.path.join(tmp_path, "macros.tex")
         shutil.copyfile(macro_path, macro_copy_path)
-    except:
+    except shutil.Error:
         print("Error creating the temporary copy")
 
     return tmp_path

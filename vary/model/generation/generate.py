@@ -1,13 +1,10 @@
 import os
-import shutil
-import subprocess
 import random
-import json
 
-import vary.model.decision_trees.analysis as dt_al
 from vary.model.generation.inject import write_variables
 from vary.model.generation.compile import compile_latex
 from vary.model.generation.analyze_pdf import page_count, get_space
+
 
 def random_config(conf_source):
     """
@@ -25,8 +22,8 @@ def random_config(conf_source):
 
     if "numbers" in conf_source:
         for var_name, params in conf_source["numbers"].items():
-            min, max, precision = params
-            config[var_name] = round(random.uniform(min, max), precision)
+            min_bound, max_bound, precision = params
+            config[var_name] = round(random.uniform(min_bound, max_bound), precision)
     
     if "enums" in conf_source:
         for var_name, options in conf_source["enums"].items():
@@ -40,7 +37,8 @@ def random_config(conf_source):
     
     return config
 
-def generate(config, filename, temp_path):
+
+def generate_pdf(config, filename, temp_path):
     """
     Builds a PDF with the values defined in config. The bibliography should already be loaded.
     Returns a dictionnary with the config and the calculated values of the PDF (number of pages, space left).
@@ -60,10 +58,11 @@ def generate(config, filename, temp_path):
 
     return row
 
+
 def generate_random(conf_source, filename, temp_path):
     """
     Builds a PDF from a random config based on conf_source.
     Returns a dictionnary with the config and the calculated values of the PDF (number of pages, space left).
     """
     config = random_config(conf_source)
-    return generate(config, filename, temp_path)
+    return generate_pdf(config, filename, temp_path)
