@@ -16,7 +16,9 @@ from pandas.core.common import flatten
 
 from vary import app
 from vary.model.files import check_filename, create_temporary_copy, clear_directory
-from vary.model.optimizer import generate_random, generate_bbl, decision_tree, generate
+from vary.model.generation.generate import generate_random, generate
+from vary.model.generation.compile import generate_bbl
+from vary.model.decision_trees.analysis import decision_tree
 from vary.model.overleaf_util import fetch_overleaf
 
 @app.route('/', methods=["GET","POST"])

@@ -70,13 +70,26 @@ def create_dt(train, y, sample, min_samples_split=10, random_state=99):
     dt.fit(train, y[:sample])
     return dt
 
+def decision_tree(csv_path, perc=100, output_path=None):
 
-if __name__ == "__main__":
-    perc = 10 # 10% of the set is used for training
-    df = load_csv("../result_long_example.csv")
+    # Here we could keep the previous df because it has the same values but we would need to manually set the types (object by default)
+    df = load_csv(csv_path)
+    
+    # Replace string values by booleans with one-hot method
     df, features = refine_csv(df)
+    # Get the training sample size
     sample = get_sample_size(df, perc)
+    # Separate the data
     train, test, y = split_frame(df, features, sample)
-    dt = create_dt(train, y, sample)
-    print("Accuracy :", dt.score(test, y[sample:]))
-    visualize_tree(dt, features, ".")
+    # Create the Decision Tree classifier
+    dt = create_dt(train, y, sample, min_samples_split = 4)
+    
+    # Only useful for testing, but we may use 100% of the data for training, and skip the computing of the accuracy
+    if perc < 100:
+        print("Accuracy :", dt.score(test, y[sample:]))
+
+    # Generate a .dot and a .png file of the tree if there is an output path
+    if output_path:
+        visualize_tree(dt, features, output_path)
+
+    return dt

@@ -7,9 +7,11 @@ import pandas as pd
 from pandas.core.common import flatten
 from pathlib import Path
 
-import vary.model.optimizer as opt
 from vary.model.overleaf_util import fetch_overleaf
 from vary.model.files import clear_directory, create_temporary_copy
+from vary.model.generation.generate import generate_random, generate
+from vary.model.generation.compile import generate_bbl
+from vary.model.decision_trees.analysis import decision_tree
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -45,18 +47,18 @@ if __name__ == "__main__":
     df = pd.DataFrame(columns = cols)
 
     # LaTeX bbl pregeneration
-    opt.generate_bbl(os.path.join(temp_path, filename))
+    generate_bbl(os.path.join(temp_path, filename))
 
     # ----------------------------------------
     # PDF generation
     # ----------------------------------------
     if args.config:
-        row = opt.generate(json.loads(args.config), filename, temp_path)
+        row = generate(json.loads(args.config), filename, temp_path)
         pdf_name = filename+".pdf"
         shutil.copyfile(os.path.join(temp_path, pdf_name), os.path.join(args.output, pdf_name))
     else:
         for i in range(args.generations):
-            row = opt.generate_random(conf_source, filename, temp_path)
+            row = generate_random(conf_source, filename, temp_path)
             row["idConfiguration"] = i
             df = df.append(row, ignore_index = True)
             if args.verbose:
@@ -80,7 +82,7 @@ if __name__ == "__main__":
     # When using the tool we could use 100% of the data as we want the tree to be as precise as possible
     perc = args.trainsize
 
-    opt.decision_tree(result_path, perc, args.output)
+    decision_tree(result_path, perc, args.output)
     
 
     
