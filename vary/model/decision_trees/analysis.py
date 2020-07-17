@@ -97,6 +97,10 @@ def decision_tree(csv_path, perc=100, output_path=None):
 
 
 def predict(classifier, config, features, target_class):
+    """
+    Uses tre decision tree to estimate the probability of a config (which can have incomplete data)
+    to match the target class
+    """
     internal_tree = classifier.tree_
 
     def recurse(node_id, acc):
