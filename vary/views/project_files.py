@@ -2,9 +2,11 @@ import os
 import json
 import re
 
-from flask import request, redirect, url_for, render_template, session
+from flask import request, redirect, url_for, render_template, session, send_from_directory
 
 from vary import app
+
+VARIABLE_FILE_NAME = "variables.json"
 
 
 @app.route('/selectfile', methods=["GET", "POST"])
@@ -26,7 +28,7 @@ def get_filenames():
     filenames = []
     dc_pattern = re.compile(r"^[^%]*\\documentclass\{[^}]*\}")
     texfile_pattern = re.compile(r".*\.tex")
-    for root, _, files in os.walk("vary/source"):
+    for root, _, files in os.walk(app.config['UPLOAD_FOLDER']):
         for filename in files:
             if texfile_pattern.match(filename):
                 path = os.path.join(root, filename)
@@ -36,3 +38,12 @@ def get_filenames():
                         filenames.append(os.path.relpath(path, "vary/source"))
 
     return json.dumps(filenames)
+
+
+@app.route('/config_src')
+def config_src():
+    """
+    Gets the config JSON file of the project, which defines the domain of the variables.
+    """
+    directory = app.config['UPLOAD_FOLDER']
+    return send_from_directory("source", VARIABLE_FILE_NAME)

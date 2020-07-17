@@ -1,7 +1,9 @@
 from flask import Flask
+import os
 
 # Constants
-UPLOAD_FOLDER = "vary/source"
+SERVER_SOURCE_FOLDER = "source"
+UPLOAD_FOLDER = os.path.join("vary", SERVER_SOURCE_FOLDER)
 ALLOWED_EXTENSIONS = {"zip"}
 
 # App
