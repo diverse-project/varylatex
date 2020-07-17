@@ -18,7 +18,7 @@ def visualize_tree(tree, feature_names, output_path):
                         filled=True,
                         special_characters=True,
                         rounded=True,
-                        class_names=list(map(str,tree.classes_)))
+                        class_names=list(map(str, tree.classes_)))
     command = ["dot", "-Tpng", dot_path, "-o", img_path]
     try:
         subprocess.check_call(command)
@@ -37,7 +37,7 @@ def load_csv(csv_path):
 def refine_csv(df):
     """
     Transforms the categorical values (typically strings) of the sets into integers that could
-    be exploited by the DecisionTree
+    be exploited by the DecisionTree. It uses the One-hot method.
     """
     # Set of categorical values
     cat_vals = set()
@@ -61,13 +61,13 @@ def get_sample_size(df, perc):
     return int(len(df)*float(perc)/100)
 
 
-def split_frame(df, features, sample):
+def split_frame(df, features, sample_size):
     """
     Separates the dataframe into training and testing set and gives the results for every entry
     """
     y = df["nbPages"]
-    train = df[features][:sample]
-    test = df[features][sample:]
+    train = df[features][:sample_size]
+    test = df[features][sample_size:]
     return train, test, y
 
 
@@ -81,19 +81,44 @@ def decision_tree(csv_path, perc=100, output_path=None):
     df = load_csv(csv_path)
     # Replace string values by booleans with one-hot method
     df, features = refine_csv(df)
-    # Get the training sample size
-    sample = get_sample_size(df, perc)
-    # Separate the data
-    train, test, y = split_frame(df, features, sample)
-    # Create the Decision Tree classifier
-    dt = create_dt(train, y, sample, min_samples_split=4)
+    sample_size = get_sample_size(df, perc)
+    train, test, y = split_frame(df, features, sample_size)
+    classifier = create_dt(train, y, sample_size, min_samples_split=4)
     
     # Only useful for testing, but we may use 100% of the data for training, and skip the computing of the accuracy
     if perc < 100:
-        print("Accuracy :", dt.score(test, y[sample:]))
+        print("Accuracy :", classifier.score(test, y[sample_size:]))
 
     # Generate a .dot and a .png file of the tree if there is an output path
     if output_path:
-        visualize_tree(dt, features, output_path)
+        visualize_tree(classifier, features, output_path)
 
-    return dt
+    return classifier
+
+
+def predict(classifier, config, features, target_class):
+    internal_tree = classifier.tree_
+
+    def recurse(node_id, acc):
+        if internal_tree.children_right[node_id] == internal_tree.children_left[node_id]:
+            res = list(map(sum, zip(acc, list(internal_tree.value[node_id][0]))))
+            return res
+        ft = features[internal_tree.feature[node_id]]
+        print(ft)
+        value = config.get(ft)
+        print(value)
+        if value is not None:
+            if value > internal_tree.threshold[node_id]:
+                return recurse(internal_tree.children_right[node_id], acc)
+            else:
+                return recurse(internal_tree.children_left[node_id], acc)
+        else:
+            new_acc = recurse(internal_tree.children_right[node_id], acc)
+            return recurse(internal_tree.children_left[node_id], new_acc)
+
+    pop = recurse(0, [0]*internal_tree.n_classes[0])
+
+    total = sum(pop)
+    target_index = list(classifier.classes_).index(target_class)
+    return pop[target_index] / total
+

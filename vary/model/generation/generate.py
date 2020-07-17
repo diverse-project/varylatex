@@ -1,6 +1,14 @@
 import os
 import random
+import json
 
+import pandas as pd
+
+from pandas.core.common import flatten
+from pathlib import Path
+
+from vary.model.files import create_temporary_copy, clear_directory
+from vary.model.generation.compile import generate_bbl
 from vary.model.generation.inject import write_variables
 from vary.model.generation.compile import compile_latex
 from vary.model.generation.analyze_pdf import page_count, get_space
@@ -62,7 +70,46 @@ def generate_pdf(config, filename, temp_path):
 def generate_random(conf_source, filename, temp_path):
     """
     Builds a PDF from a random config based on conf_source.
-    Returns a dictionnary with the config and the calculated values of the PDF (number of pages, space left).
+    Returns a dictionary with the config and the calculated values of the PDF (number of pages, space left).
     """
     config = random_config(conf_source)
     return generate_pdf(config, filename, temp_path)
+
+
+def generate_pdfs(filename, source, output, nb_gens, reset=True):
+    """
+    Creates as many PDFs as specified with nb_gens, from a random config based on conf_source, and calculate
+    their values. The config and values are stores in a "result.csv" file in the output directory.
+    If reset is set to False and there is already a result file, the results are appended to the previous ones.
+    """
+    temp_path = create_temporary_copy(source)  # Create the temporary working directory
+    generate_bbl(os.path.join(temp_path, filename))  # LaTeX bbl pregeneration
+
+    # Load the variables
+    conf_source_path = os.path.join(source, "variables.json")
+    with open(conf_source_path) as f:
+        conf_source = json.load(f)
+
+    # DataFrame initialisation
+    csv_result_path = os.path.join(output, "result.csv")
+    df = _create_df(conf_source) if reset else pd.read_csv(csv_result_path, index_col=0)
+
+    for _ in range(nb_gens):
+        row = generate_random(conf_source, filename, temp_path)
+        df = df.append(row, ignore_index=True)
+
+    # Clean working directory
+    clear_directory(os.path.dirname(temp_path))
+    # Create the output directory
+    Path(output).mkdir(parents=True, exist_ok=True)
+    # Export results to CSV
+    df.to_csv(csv_result_path)
+
+
+def _create_df(conf_source):
+    cols = conf_source["booleans"] \
+           + list(conf_source["numbers"].keys()) \
+           + list(conf_source["enums"].keys()) \
+           + list(flatten(conf_source["choices"])) \
+           + ["nbPages", "space"]
+    return pd.DataFrame(columns=cols)

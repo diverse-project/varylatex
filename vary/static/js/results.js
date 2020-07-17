@@ -30,9 +30,8 @@ function compile(reset) {
         document.getElementsByTagName("thead")[0].innerHTML = "";
         document.getElementsByTagName("tbody")[0].innerHTML = "";
     }
-    else route += "/False"
 
-    $.post(route, csv => {
+    $.post(route, {'reset' : reset} ,csv => {
         var parsedCSV = d3.csv.parseRows(csv);
         if (reset)
             d3.select("thead")
