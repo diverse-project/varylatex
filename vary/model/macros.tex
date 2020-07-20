@@ -1,12 +1,12 @@
 % Helper command that defines a value used with varylatex
-% It hides the name of the value behind the prefix 'vary@' to avoir conflicts.
+% It hides the name of the value behind the prefix 'vary@' to avoid conflicts.
 % Usage : \defVal{name}{value}
 \newcommand\defVal[2]{
   % No need to use \makeatletter and \makeatother, it seems that \csname already does that
   \expandafter\newcommand\csname vary@#1\endcsname{#2}
 }
 
-% Helper comannd to get the value previously defined with the \defVal macro
+% Helper command to get the value previously defined with the \defVal macro
 % Usage : \getVal{name}
 \newcommand\getVal[1]{
   \ifcsname vary@#1\endcsname
