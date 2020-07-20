@@ -43,6 +43,8 @@ In this file you can declare four types of variable domains :
 - `"numbers"` : A JSON object mapping the name of the variable with an array of length 3, containing the minimum, the maximum, and the precision of the value.
 - `"enums"` : A JSON object mapping the name of a variable with an array of all the possible values it can take.
 - `"choices"` : An array of arrays (groups) of booleans, where exactly one boolean is set to `true` for each group.
+An example of a `variables.json` file can be found [there](https://github.com/diverse-project/varylatex/blob/ec912cbdc3d38c512b52b28313ebcc481bdedc33/vary/example/fse/variables.json)
+
 
 ## Manually setting variables
 
