@@ -8,13 +8,13 @@
 
 % Helper command to get the value previously defined with the \defVal macro
 % Usage : \getVal{name}
-\newcommand\getVal[1]{
-  \ifcsname vary@#1\endcsname
-  \csname vary@#1\endcsname
-  \else
-  \undefined
-  \fi
-}
+\newcommand\getVal[1]{%
+  \ifcsname vary@#1\endcsname%
+  \csname vary@#1\endcsname%
+  \else%
+  \undefined%
+  \fi%
+}%
 
 % Helper command to make a custom if condition and know if the value has been set
 % Usage : \ifVal{name}{content}
