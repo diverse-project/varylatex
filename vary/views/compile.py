@@ -6,7 +6,7 @@ from shutil import copyfile
 from vary import app
 from vary.model.generation.compile import generate_bbl
 from vary.model.generation.generate import generate_pdf, generate_pdfs
-from vary.model.files import create_temporary_copy, clear_directory
+from vary.model.files import create_temporary_copy, clear_directory, inject_space_indicator
 
 
 @app.route('/compile/<int:generations>', methods=["POST"])
@@ -32,7 +32,10 @@ def build_pdf():
     output = "vary/results"
     source = os.path.join(app.config['UPLOAD_FOLDER'])
     temp_path = create_temporary_copy(source)
-    generate_bbl(os.path.join(temp_path, filename))
+    file_path = os.path.join(temp_path, filename)
+
+    inject_space_indicator(file_path)
+    generate_bbl(file_path)
 
     generate_pdf(config, filename, temp_path)
 

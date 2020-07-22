@@ -7,11 +7,11 @@ import pandas as pd
 from pandas.core.common import flatten
 from pathlib import Path
 
-from vary.model.files import create_temporary_copy, clear_directory
+from vary.model.files import create_temporary_copy, clear_directory, get_remaining_space, inject_space_indicator
 from vary.model.generation.compile import generate_bbl
 from vary.model.generation.inject import write_variables
 from vary.model.generation.compile import compile_latex
-from vary.model.generation.analyze_pdf import page_count, get_space
+from vary.model.generation.analyze_pdf import page_count
 
 
 def random_config(conf_source):
@@ -62,7 +62,7 @@ def generate_pdf(config, filename, temp_path):
     
     row = config.copy()
     row["nbPages"] = page_count(pdf_path)
-    row["space"] = get_space(pdf_path)
+    row["space"] = get_remaining_space(temp_path)
 
     return row
 
@@ -83,7 +83,9 @@ def generate_pdfs(filename, source, output, nb_gens, reset=True):
     If reset is set to False and there is already a result file, the results are appended to the previous ones.
     """
     temp_path = create_temporary_copy(source)  # Create the temporary working directory
-    generate_bbl(os.path.join(temp_path, filename))  # LaTeX bbl pregeneration
+    file_path = os.path.join(temp_path, filename)
+    inject_space_indicator(file_path)
+    generate_bbl(file_path)  # LaTeX bbl pregeneration
 
     # Load the variables
     conf_source_path = os.path.join(source, "variables.json")

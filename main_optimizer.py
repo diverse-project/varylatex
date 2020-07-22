@@ -8,7 +8,7 @@ from pandas.core.common import flatten
 from pathlib import Path
 
 from vary.model.overleaf_util import fetch_overleaf
-from vary.model.files import clear_directory, create_temporary_copy
+from vary.model.files import clear_directory, create_temporary_copy, inject_space_indicator
 from vary.model.generation.generate import generate_random, generate_pdf
 from vary.model.generation.compile import generate_bbl
 from vary.model.decision_trees.analysis import decision_tree
@@ -49,8 +49,10 @@ if __name__ == "__main__":
     cols = conf_source["booleans"] + list(conf_source["numbers"].keys()) + list(conf_source["enums"].keys()) + list(flatten(conf_source["choices"])) + ["nbPages", "space", "idConfiguration"]
     df = pd.DataFrame(columns=cols)
 
+    file_path = os.path.join(temp_path, filename)
+    inject_space_indicator(file_path)
     # LaTeX bbl pregeneration
-    generate_bbl(os.path.join(temp_path, filename))
+    generate_bbl(file_path)
 
     # ----------------------------------------
     # PDF generation
@@ -67,7 +69,6 @@ if __name__ == "__main__":
             if args.verbose:
                 print(f"Doc {i} generated")
 
-        
     # Clean working directory
     shutil.rmtree(temp_path)
     # Create the output directory
