@@ -25,9 +25,8 @@ def compile_latex(filename):
     """
     working_directory, texfile = os.path.split(filename)
     try:
-        command = ["pdflatex", "-interaction=batchmode", texfile]
-        run_command(command, working_directory)
-        run_command(command, working_directory)
+        run_command(["pdflatex", "-draftmode", "-interaction=batchmode", texfile], working_directory)
+        run_command(["pdflatex", "-interaction=batchmode", texfile], working_directory)
         return True
     except subprocess.TimeoutExpired:
         return False
