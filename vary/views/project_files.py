@@ -26,7 +26,7 @@ def get_filenames():
     the fact that it contains or not a \documentclass{} declaration
     """
     filenames = []
-    dc_pattern = re.compile(r"^[^%]*\\documentclass\{[^}]*\}")
+    dc_pattern = re.compile(r"^[^%]*\\begin{document}")
     texfile_pattern = re.compile(r".*\.tex")
     for root, _, files in os.walk(app.config['UPLOAD_FOLDER']):
         for filename in files:
