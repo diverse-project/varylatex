@@ -3,7 +3,9 @@
 {% block head %}
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename = 'js/custom_select.js')}}"></script>
 <script src="{{ url_for('static', filename = 'js/results.js')}}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/custom_select.css')}}">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/results.css')}}">
 {% endblock %}
 
@@ -17,8 +19,13 @@
 <div class="message">
     <label id="msg"></label>
 </div>
+<div class="div-configurator">
+    <h2>Options</h2>
+    <table id="gen-table">
+    </table>
+</div>
 <div class="table-container" style="visibility: hidden;">
-    <table>
+    <table id="results">
         <thead></thead>
         <tbody></tbody>
     </table>

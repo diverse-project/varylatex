@@ -1,22 +1,48 @@
 /* Centering */
-.table-container, .pdf, .gen-options {
+.table-container, .pdf, .gen-options, .div-configurator {
     margin: 5px auto;
     display: block;
 }
 
 /* Scrollable container for a table */
-.table-container{
+.table-container {
     width: 70%;
     max-height: 300px;
     overflow: scroll;
     border: 2px black solid;
 }
 
+
+.gen-options, .div-configurator {
+    width: 70%;
+    text-align: center;
+}
+
+.slider-input-container {
+    display: flex;
+    align-items: center;
+}
+
+
+.custom-select{
+    /* The custom selects fill the cell they are in */
+    height: 100%;
+    width: 100%;
+}
+
+
+/* Custom style for the tables in this page */
+table {
+    margin: auto; /* Center horizontally */
+}
+
+td {
+    padding: 0pt;
+    height: 100%;
+}
+
+/* PDF Renderer */
 .pdf {
     width: 800px;
     height: 1100px;
-}
-
-.gen-options {
-    text-align: center;
 }

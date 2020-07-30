@@ -14,7 +14,7 @@ from vary.model.generation.compile import compile_latex
 from vary.model.generation.analyze_pdf import page_count
 
 
-def random_config(conf_source):
+def random_config(conf_source, fixed_values={}):
     """
     Generates a config dictionnary based on the range of values provided from a dictionnary containing the following keys :
     "booleans", "numbers", "enums" and "choices".
@@ -26,20 +26,26 @@ def random_config(conf_source):
     config = {}
     if "booleans" in conf_source:
         for boolean in conf_source["booleans"]:
-            config[boolean] = random.choice([True, False])
+            config[boolean] = fixed_values[boolean] if boolean in fixed_values else random.choice([True, False])
 
     if "numbers" in conf_source:
         for var_name, params in conf_source["numbers"].items():
-            min_bound, max_bound, precision = params
-            config[var_name] = round(random.uniform(min_bound, max_bound), precision)
-    
+            if var_name in fixed_values:
+                config[var_name] = fixed_values[var_name]
+            else:
+                min_bound, max_bound, precision = params
+                config[var_name] = round(random.uniform(min_bound, max_bound), precision)
+
     if "enums" in conf_source:
         for var_name, options in conf_source["enums"].items():
-            config[var_name] = random.choice(options)
+            config[var_name] = fixed_values[var_name] if var_name in fixed_values else random.choice(options)
 
     if "choices" in conf_source:
         for options in conf_source["choices"]:
             selection = random.choice(options)
+            for o in options:
+                if o in fixed_values and fixed_values[o]:
+                    selection = o
             for o in options:
                 config[o] = o == selection
     

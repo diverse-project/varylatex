@@ -1,0 +1,37 @@
+.custom-select {
+    display: inline-flex;
+    flex-direction: column; 
+    height: 0;
+}
+
+.custom-option, .custom-selected-option {
+    padding: 5pt;
+    height: min-content;
+    display: inline-block;
+}
+
+.custom-option {
+    background-color: lightslategray; /* Default background */
+}
+
+.custom-selected-option {
+    background-color: mediumslateblue; /* Default background */
+}
+
+.option-collapsed {
+    /* Set the height of the element to 0 without changing its width*/
+    padding-top: 0px;
+    padding-bottom: 0px;
+
+    margin-top: 0px;
+    margin-bottom: 0px;
+    height: 0px;
+    /* Hide the element but keep its new dimentions*/
+    visibility: hidden;
+}
+
+.custom-select-options {
+    height: 0px;
+    display: flex;
+    flex-direction: column;
+}
