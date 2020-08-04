@@ -68,6 +68,7 @@ class CustomSelect {
 
         this.options = [];
         this.selection_listeners = [];
+        this.name = "";
 
         this.selection_div = document.createElement("div");
         this.selection_div.classList.add("custom-selected-option");
@@ -157,7 +158,7 @@ class CustomSelect {
 
 function set_background(element, color) {
     if (color) 
-        element.style["backgroundColor"] = color;
+        element.style["background-color"] = color;
     else
         element.style.removeProperty("background-color");
     

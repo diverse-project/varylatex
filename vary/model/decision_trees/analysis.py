@@ -31,7 +31,7 @@ def load_csv(csv_path):
     """
     Creates a dataframe based on the CSV path
     """
-    return pd.read_csv(csv_path, index_col = 0)
+    return pd.read_csv(csv_path, index_col=0)
 
 
 def refine_csv(df):
@@ -78,6 +78,9 @@ def create_dt(train, y, sample, min_samples_split=10, random_state=99):
 
 
 def decision_tree(csv_path, perc=100, output_path=None):
+    """
+    Returns the classifier and the array of the feature names
+    """
     df = load_csv(csv_path)
     # Replace string values by booleans with one-hot method
     df, features = refine_csv(df)
@@ -93,26 +96,42 @@ def decision_tree(csv_path, perc=100, output_path=None):
     if output_path:
         visualize_tree(classifier, features, output_path)
 
-    return classifier
+    return classifier, features
 
 
-def predict(classifier, config, features, target_class):
+def predict(classifier, config, config_src, features, target_class): # TODO add the source to the arguments to induce the missing features
     """
     Uses tre decision tree to estimate the probability of a config (which can have incomplete data)
     to match the target class
     """
     internal_tree = classifier.tree_
 
+    # Modify the config to adapt categorical values
+    newconfig = config.copy()
+    for name in config_src["enums"]:
+        val = config.get(name)
+        if (val):
+            del newconfig[name]
+            for possible_value in config_src["enums"][name]:
+                temp_name = pd.get_dummies(possible_value, prefix = name).columns[0]
+                newconfig[temp_name] = 0
+            newname = pd.get_dummies(val, prefix = name).columns[0]
+            newconfig[newname] = 1
+            
+    # Go through the nodes and store the population for each class in the accumulator
     def recurse(node_id, acc):
+        # End condition : leaf node
         if internal_tree.children_right[node_id] == internal_tree.children_left[node_id]:
+            # Add the populations of the leaf to the accumulator
             res = list(map(sum, zip(acc, list(internal_tree.value[node_id][0]))))
             return res
+        # The feature used in this node
         ft = features[internal_tree.feature[node_id]]
-        print(ft)
-        value = config.get(ft)
-        print(value)
+        value = newconfig.get(ft)
+        # If the value is defined then follow the corresponding path, otherwise work on the populations
+        # on the two branches
         if value is not None:
-            if value > internal_tree.threshold[node_id]:
+            if float(value) > internal_tree.threshold[node_id]:
                 return recurse(internal_tree.children_right[node_id], acc)
             else:
                 return recurse(internal_tree.children_left[node_id], acc)
@@ -123,6 +142,142 @@ def predict(classifier, config, features, target_class):
     pop = recurse(0, [0]*internal_tree.n_classes[0])
 
     total = sum(pop)
-    target_index = list(classifier.classes_).index(target_class)
+    classes = list(classifier.classes_)
+    if target_class not in classes:
+        return 0
+    target_index = classes.index(target_class)
     return pop[target_index] / total
+
+
+def eval_options(classifier, config, config_src, features, target_class):
+    """
+    For a given config, evaluates the probability for a config one change away to match the target class.
+    Returns a dictionary similar to a configuration source but with probabilities.
+    Structure :
+    {
+        "enums" : {
+            <e_name1> : {
+                "default" : <proba_default>,
+                "values" : {
+                    <val1_1> : <e_prob1_1>,
+                    ...
+                    <val1_n> : <e_prob1_n>
+                }
+            },
+            <e_name2> : { ... },
+            ...
+        },
+        "booleans" : {
+            <b_name1> : {
+                "default" : <b_prob1>
+                "false" : <b_prob1_false>,
+                "true" : <b_prob1_true>,
+            },
+            <b_name2> : { ... }
+        },
+        "choices" : {
+            <c_name1> : <c_prob1>,
+            <c_name2> : <c_prob2>,
+            ...
+        },
+        "numbers" : {
+            <n_name1> : {
+                "default" : <n_prob1>,
+                "limits" [
+                    {"lower" : <lower_1_1>, "upper" : <upper_1_1>, "prob" : <n_prob1_1>},
+                    {"lower" : <lower_1_2>, "upper" : <upper_1_2>, "prob" : <n_prob1_2>},
+                    { ... },
+                    ...
+                ]
+            }
+        }
+    }
+    """
+    prob_dict = {}
+    temp_cfg = config.copy()
+
+    # enums
+    enums = {}
+    for name, values in config_src["enums"].items():
+        enums[name] = {}
+        probas = {}
+
+        for val in values:
+            temp_cfg[name] = val
+            probas[val] = predict(classifier, temp_cfg, config_src, features, target_class)
+        
+        del temp_cfg[name]
+        enums[name]["default"] = predict(classifier, temp_cfg, config_src, features, target_class)
+
+        if name in config:
+            temp_cfg[name] = config[name]
+        enums[name]["values"] = probas
+
+    prob_dict["enums"] = enums
+ 
+    # booleans
+    booleans = {}
+    for name in config_src["booleans"]:
+        probas = {}
+        for val in [True, False]:
+            temp_cfg[name] = val
+            probas[val] = predict(classifier, temp_cfg, config_src, features, target_class)
+        
+        del temp_cfg[name]
+        probas["default"] = predict(classifier, temp_cfg, config_src, features, target_class)
+
+        if name in config:
+            temp_cfg[name] = config[name]
+        booleans[name] = probas
+
+    prob_dict["booleans"] = booleans
+    
+    # choices
+    choices = {}
+    for group in config_src["choices"]:
+        selected_value = None
+        for name in group:
+            if name in temp_cfg:
+                del temp_cfg[name]
+            if name in config:
+                selected_value = name
+        for name in group:
+            temp_cfg[name] = True
+            choices[name] = predict(classifier, temp_cfg, config_src, features, target_class)
+            del temp_cfg[name]
+        if selected_value:
+            temp_cfg[selected_value] = config[selected_value]
+
+    prob_dict["choices"] = choices
+
+    # numbers
+    numbers = {}
+
+    for name, domain in config_src["numbers"].items():
+        numbers[name] = {}
+        min_bound, max_bound, _ = domain
+        numbers[name]["limits"] = []
+        internal_tree = classifier.tree_
+        thresholds = \
+            [min_bound] + \
+            [internal_tree.threshold[i] for i, n in enumerate(internal_tree.feature) if n >= 0 and features[n] == name] + \
+            [max_bound]
+        thresholds.sort()
+        
+        for lower, upper in (zip(thresholds[:-1], thresholds[1:])):
+            average = (lower + upper) / 2
+            temp_cfg[name] = average
+            numbers[name]["limits"].append({
+                "lower": lower,
+                "upper": upper,
+                "prob": predict(classifier, temp_cfg, config_src, features, target_class)
+            })
+            del temp_cfg[name]
+            numbers[name]["default"] = predict(classifier, temp_cfg, config_src, features, target_class)
+
+            if name in config:
+                temp_cfg[name] = config[name]
+    prob_dict["numbers"] = numbers
+
+    return prob_dict
 

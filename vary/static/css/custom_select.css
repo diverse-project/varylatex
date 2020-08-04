@@ -12,6 +12,7 @@
 
 .custom-option {
     background-color: lightslategray; /* Default background */
+    z-index: 10;
 }
 
 .custom-selected-option {

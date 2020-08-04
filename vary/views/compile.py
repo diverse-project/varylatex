@@ -1,22 +1,25 @@
 import os
 
-from flask import session, send_from_directory, request
+from flask import session, send_from_directory, request, g
 from shutil import copyfile
 
 from vary import app
 from vary.model.generation.compile import generate_bbl
 from vary.model.generation.generate import generate_pdf, generate_pdfs
 from vary.model.files import create_temporary_copy, clear_directory, inject_space_indicator
+from vary.model.decision_trees.analysis import decision_tree
 
 
 @app.route('/compile/<int:generations>', methods=["POST"])
 def compile_pdfs(generations, reset=True):
     output = "vary/results"
     filename = session['main_file_name'].replace(".tex", "")  # main file name without extension
-    source = os.path.join(app.config['UPLOAD_FOLDER'])  # The project is located in the "source" folder
+    source = app.config['UPLOAD_FOLDER']  # The project is located in the "source" folder
     reset = request.form.get("reset") == 'true'
 
     generate_pdfs(filename, source, output, generations, reset)
+    csv_path = os.path.join(output, "result.csv")
+    app.classifier, app.features = decision_tree(csv_path)
     return send_from_directory("results", "result.csv")
 
 

@@ -30,16 +30,16 @@
     width: 100%;
 }
 
-
-/* Custom style for the tables in this page */
-table {
+/* Custom style for the config table in this page */
+.div-configurator table {
     margin: auto; /* Center horizontally */
 }
 
-td {
+.div-configurator td {
     padding: 0pt;
     height: 100%;
 }
+
 
 /* PDF Renderer */
 .pdf {
