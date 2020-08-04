@@ -64,7 +64,6 @@ if __name__ == "__main__":
     else:
         for i in range(args.generations):
             row = generate_random(conf_source, filename, temp_path)
-            row["idConfiguration"] = i
             df = df.append(row, ignore_index=True)
             if args.verbose:
                 print(f"Doc {i} generated")
