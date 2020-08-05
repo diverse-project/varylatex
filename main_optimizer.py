@@ -46,7 +46,11 @@ if __name__ == "__main__":
         conf_source = json.load(f)
 
     # DataFrame initialisation 
-    cols = conf_source["booleans"] + list(conf_source["numbers"].keys()) + list(conf_source["enums"].keys()) + list(flatten(conf_source["choices"])) + ["nbPages", "space", "idConfiguration"]
+    cols = conf_source["booleans"] + \
+        list(conf_source["numbers"].keys()) + \
+        list(conf_source["enums"].keys()) + \
+        list(flatten(conf_source["choices"])) + \
+        ["nbPages", "space"]
     df = pd.DataFrame(columns=cols)
 
     file_path = os.path.join(temp_path, filename)

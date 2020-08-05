@@ -24,7 +24,7 @@ def clear_directory(path):
 
 
 def create_temporary_copy(path):
-    tmp_path = os.path.join(os.path.dirname(path), "build/latex")
+    tmp_path = os.path.join(os.getcwd(), "vary/build/latex")
     try:
         shutil.copytree(path, tmp_path)
         macro_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], "macros.tex")
