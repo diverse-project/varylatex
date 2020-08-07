@@ -18,8 +18,6 @@ def compile_pdfs(generations, reset=True):
     reset = request.form.get("reset") == 'true'
 
     generate_pdfs(filename, source, output, generations, reset)
-    csv_path = os.path.join(output, "result.csv")
-    app.classifier, app.features = decision_tree(csv_path)
     return send_from_directory("results", "result.csv")
 
 

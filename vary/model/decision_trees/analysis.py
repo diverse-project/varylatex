@@ -61,11 +61,11 @@ def get_sample_size(df, perc):
     return int(len(df)*float(perc)/100)
 
 
-def split_frame(df, features, sample_size):
+def split_frame(df, features, sample_size, max_pages):
     """
     Separates the dataframe into training and testing set and gives the results for every entry
     """
-    y = df["nbPages"]
+    y = (df["nbPages"] <= max_pages) & (df["space"] >= 0)
     train = df[features][:sample_size]
     test = df[features][sample_size:]
     return train, test, y
@@ -77,7 +77,7 @@ def create_dt(train, y, sample, min_samples_split=10, random_state=99):
     return dt
 
 
-def decision_tree(csv_path, perc=100, output_path=None):
+def decision_tree(csv_path, max_pages, perc=100, output_path=None):
     """
     Returns the classifier and the array of the feature names
     """
@@ -85,7 +85,7 @@ def decision_tree(csv_path, perc=100, output_path=None):
     # Replace string values by booleans with one-hot method
     df, features = refine_csv(df)
     sample_size = get_sample_size(df, perc)
-    train, test, y = split_frame(df, features, sample_size)
+    train, test, y = split_frame(df, features, sample_size, max_pages)
     classifier = create_dt(train, y, sample_size, min_samples_split=4)
     
     # Only useful for testing, but we may use 100% of the data for training, and skip the computing of the accuracy
@@ -99,7 +99,7 @@ def decision_tree(csv_path, perc=100, output_path=None):
     return classifier, features
 
 
-def predict(classifier, config, config_src, features, target_class): # TODO add the source to the arguments to induce the missing features
+def predict(classifier, config, config_src, features):
     """
     Uses tre decision tree to estimate the probability of a config (which can have incomplete data)
     to match the target class
@@ -108,14 +108,15 @@ def predict(classifier, config, config_src, features, target_class): # TODO add 
 
     # Modify the config to adapt categorical values
     newconfig = config.copy()
+
     for name in config_src["enums"]:
         val = config.get(name)
-        if (val):
+        if val:
             del newconfig[name]
             for possible_value in config_src["enums"][name]:
-                temp_name = pd.get_dummies(possible_value, prefix = name).columns[0]
+                temp_name = pd.get_dummies(possible_value, prefix=name).columns[0]
                 newconfig[temp_name] = 0
-            newname = pd.get_dummies(val, prefix = name).columns[0]
+            newname = pd.get_dummies(val, prefix=name).columns[0]
             newconfig[newname] = 1
             
     # Go through the nodes and store the population for each class in the accumulator
@@ -143,13 +144,13 @@ def predict(classifier, config, config_src, features, target_class): # TODO add 
 
     total = sum(pop)
     classes = list(classifier.classes_)
-    if target_class not in classes:
+    if True not in classes:
         return 0
-    target_index = classes.index(target_class)
+    target_index = classes.index(True)
     return pop[target_index] / total
 
 
-def eval_options(classifier, config, config_src, features, target_class):
+def eval_options(classifier, config, config_src, features):
     """
     For a given config, evaluates the probability for a config one change away to match the target class.
     Returns a dictionary similar to a configuration source but with probabilities.
@@ -204,10 +205,10 @@ def eval_options(classifier, config, config_src, features, target_class):
 
         for val in values:
             temp_cfg[name] = val
-            probas[val] = predict(classifier, temp_cfg, config_src, features, target_class)
+            probas[val] = predict(classifier, temp_cfg, config_src, features)
         
         del temp_cfg[name]
-        enums[name]["default"] = predict(classifier, temp_cfg, config_src, features, target_class)
+        enums[name]["default"] = predict(classifier, temp_cfg, config_src, features)
 
         if name in config:
             temp_cfg[name] = config[name]
@@ -221,10 +222,10 @@ def eval_options(classifier, config, config_src, features, target_class):
         probas = {}
         for val in [True, False]:
             temp_cfg[name] = val
-            probas[val] = predict(classifier, temp_cfg, config_src, features, target_class)
+            probas[val] = predict(classifier, temp_cfg, config_src, features)
         
         del temp_cfg[name]
-        probas["default"] = predict(classifier, temp_cfg, config_src, features, target_class)
+        probas["default"] = predict(classifier, temp_cfg, config_src, features)
 
         if name in config:
             temp_cfg[name] = config[name]
@@ -243,7 +244,7 @@ def eval_options(classifier, config, config_src, features, target_class):
                 selected_value = name
         for name in group:
             temp_cfg[name] = True
-            choices[name] = predict(classifier, temp_cfg, config_src, features, target_class)
+            choices[name] = predict(classifier, temp_cfg, config_src, features)
             del temp_cfg[name]
         if selected_value:
             temp_cfg[selected_value] = config[selected_value]
@@ -270,10 +271,10 @@ def eval_options(classifier, config, config_src, features, target_class):
             numbers[name]["limits"].append({
                 "lower": lower,
                 "upper": upper,
-                "prob": predict(classifier, temp_cfg, config_src, features, target_class)
+                "prob": predict(classifier, temp_cfg, config_src, features)
             })
             del temp_cfg[name]
-            numbers[name]["default"] = predict(classifier, temp_cfg, config_src, features, target_class)
+            numbers[name]["default"] = predict(classifier, temp_cfg, config_src, features)
 
             if name in config:
                 temp_cfg[name] = config[name]

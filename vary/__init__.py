@@ -4,6 +4,8 @@ import os
 # Constants
 SERVER_SOURCE_FOLDER = "source"
 UPLOAD_FOLDER = os.path.join("vary", SERVER_SOURCE_FOLDER)
+SERVER_RESULTS_FOLDER = "results"
+RESULT_FOLDER = os.path.join("vary", SERVER_RESULTS_FOLDER)
 ALLOWED_EXTENSIONS = {"zip"}
 
 # App

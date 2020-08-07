@@ -30,6 +30,7 @@ if __name__ == "__main__":
                         help="Key of the readonly link of the project on Overleaf (the letters avter '/read/'). \
                         It needs to have a 'values.json' file and the document must include 'macros' and 'values'")
     parser.add_argument("-c", "--config", help="Generate a specific PDF from a config JSON string")
+    parser.add_argument("-p", "--maxpages", type=int, help="The maximum amount of pages accepted for the document")
     args = parser.parse_args()
 
     document_path = args.source
@@ -89,4 +90,5 @@ if __name__ == "__main__":
     # When using the tool we could use 100% of the data as we want the tree to be as precise as possible
     perc = args.trainsize
 
-    decision_tree(result_path, perc, args.output)
+    if args.maxpages:
+        decision_tree(result_path, args.maxpages, perc, args.output)
