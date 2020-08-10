@@ -18,10 +18,9 @@ def get_tree():
     response.headers['Cache-Control'] = 'no-store'
     return response
 
-@app.route("/predict", methods=["POST"])
-def predict():
+@app.route("/predict/<int:max_pages>", methods=["POST"])
+def predict(max_pages):
     config = request.form
-    max_pages = 4
 
     conf_source_path = os.path.join(app.config["UPLOAD_FOLDER"], "variables.json")
     with open(conf_source_path) as f:

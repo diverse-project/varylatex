@@ -105,7 +105,6 @@ def predict(classifier, config, config_src, features):
     to match the target class
     """
     internal_tree = classifier.tree_
-
     # Modify the config to adapt categorical values
     newconfig = config.copy()
 
@@ -132,6 +131,11 @@ def predict(classifier, config, config_src, features):
         # If the value is defined then follow the corresponding path, otherwise work on the populations
         # on the two branches
         if value is not None:
+            print(ft)
+            if value == "true":
+                value = 1
+            if value == "false":
+                value = 0
             if float(value) > internal_tree.threshold[node_id]:
                 return recurse(internal_tree.children_right[node_id], acc)
             else:
