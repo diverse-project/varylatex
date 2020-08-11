@@ -324,8 +324,21 @@ function update_background_choice(select) {
 function refresh_probas() {
     let max_pages = 4;
     let url = "/predict/" + max_pages;
+    /*
     $.post(url, CONFIG, result => {
         PROBAS = JSON.parse(result);
         update_selector();
     });
+    */
+   $.ajax({
+        url: url,
+        dataType: "json",
+        contentType: "application/json",
+        type: "POST",
+        data: JSON.stringify(CONFIG),
+        success: result => {
+            PROBAS = result;
+            update_selector();
+        }
+   })
 }

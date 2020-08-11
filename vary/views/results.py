@@ -20,8 +20,7 @@ def get_tree():
 
 @app.route("/predict/<int:max_pages>", methods=["POST"])
 def predict(max_pages):
-    config = request.form
-
+    config = request.json
     conf_source_path = os.path.join(app.config["UPLOAD_FOLDER"], "variables.json")
     with open(conf_source_path) as f:
         conf_source = json.load(f)
