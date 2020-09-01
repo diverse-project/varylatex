@@ -13,10 +13,9 @@ VARIABLE_FILE_NAME = "variables.json"
 def selectfile():
     if request.method == "POST":
         session['main_file_name'] = request.form.get('filename')
-        return redirect(url_for('results'))
+        return redirect(url_for('mode'))
     else:
-        name = session['project_name']
-        return render_template('selectfile.html', name=name)
+        return render_template('selectfile.html')
 
 
 @app.route('/filenames')

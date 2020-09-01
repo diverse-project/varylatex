@@ -9,12 +9,10 @@
 <h1>VaryLaTeX</h1>
 
 <div class="selection-container">
-    <h2>Select the project's main file</h2>
-    <form action="/selectfile" method="POST">
-        <select id="file_select" name="filename" onchange="selection_changed()">
-            <option style="display: none;">Select file name</option>
-        </select>
-        <input type="submit" id="submit" value="Select">
-    </form>
+    <h2>Select mode</h2>
+    <div class="buttons">
+        <button onclick="location.href='/config'">Free config</button>
+        <button onclick="location.href='/constraints'">Constraints</button>
+    </div>
 </div>
 {% endblock %}

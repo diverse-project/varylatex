@@ -6,10 +6,9 @@ from flask import session, render_template, send_from_directory, request
 from vary import app, RESULT_FOLDER
 from vary.model.decision_trees.analysis import eval_options, decision_tree
 
-@app.route('/results')
-def results():
-    name = session['project_name']
-    return render_template("results.html", name=name)
+@app.route('/constraints')
+def constraints():
+    return render_template("constraints.html")
 
 
 @app.route('/tree_img')

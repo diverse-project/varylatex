@@ -73,12 +73,12 @@ def generate_pdf(config, filename, temp_path):
     return row
 
 
-def generate_random(conf_source, filename, temp_path):
+def generate_random(conf_source, filename, temp_path, fixes_values={}):
     """
     Builds a PDF from a random config based on conf_source.
     Returns a dictionary with the config and the calculated values of the PDF (number of pages, space left).
     """
-    config = random_config(conf_source)
+    config = random_config(conf_source, fixes_values)
     return generate_pdf(config, filename, temp_path)
 
 

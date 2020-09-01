@@ -1,11 +1,12 @@
 import os
+import json
 
 from flask import session, send_from_directory, request, g
 from shutil import copyfile
 
 from vary import app
 from vary.model.generation.compile import generate_bbl
-from vary.model.generation.generate import generate_pdf, generate_pdfs
+from vary.model.generation.generate import generate_random, generate_pdfs
 from vary.model.files import create_temporary_copy, clear_directory, inject_space_indicator
 from vary.model.decision_trees.analysis import decision_tree
 
@@ -38,7 +39,11 @@ def build_pdf():
     inject_space_indicator(file_path)
     generate_bbl(file_path)
 
-    generate_pdf(config, filename, temp_path)
+    conf_source_path = os.path.join(source, "variables.json")
+    with open(conf_source_path) as f:
+        conf_source = json.load(f)
+
+    generate_random(conf_source, filename, temp_path, config)
 
     outpath = os.path.join(output, filename + ".pdf")
     if os.path.exists(outpath):

@@ -1,0 +1,48 @@
+ .tab-bar {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  width: 500pt;
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab-bar button {
+  width: 100%;
+  background-color: inherit;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  padding: 14px 0;
+  transition: 0.2s;
+}
+
+/* Change background color of buttons on hover */
+.tab-bar button:hover {
+  background-color: #aaa;
+}
+
+/* Create an active/current tablink class */
+.tab-bar button.active {
+  background-color: #aaa;
+}
+
+/* Style the tab content */
+.tab-content {
+  width: 500pt;
+  height: 200pt;
+  display: none;
+  flex-direction: column;
+  text-align: center;
+  margin: 0 auto;
+  padding: 20px 0;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.tab-content form {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}

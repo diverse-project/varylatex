@@ -1,18 +1,31 @@
 {% extends 'base.html' %}
 
 {% block head %}
+<script src="{{ url_for('static', filename = 'js/index.js')}}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/index.css')}}">
 {% endblock %}
 
 {% block body %}
-<h1>Upload new File</h1>
-<form method=post enctype=multipart/form-data>
-    <input type=file name=file>
-    <input type=submit value=Upload>
-</form>
-<form method="POST" action="/import_overleaf">
-    <input type="text" name="key" placeholder="xctzbtbhcxnj">
-    <input type="submit" name="Import">
-</form>
-<hr/>
+<h1>VaryLaTeX</h1>
+<div class="tab-bar">
+    <button class="tab-button" onclick="openTab(event, 'zipDiv')">Upload Archive</button>
+    <button class="tab-button" onclick="openTab(event, 'overleafDiv')">Overleaf URL</button>
+</div>
+
+<div id="zipDiv" class="tab-content">
+    <h2>Import project archive</h2>
+    <form method=post enctype=multipart/form-data action="/upload_project">
+        <input type=file name=file>
+        <input type=submit value=Upload>
+    </form>
+</div>
+
+<div id="overleafDiv" class="tab-content">
+    <form method="POST" action="/import_overleaf">
+        <h2>Paste Overleaf invite key</h2>
+        <input type="text" name="key" placeholder="xctzbtbhcxnj">
+        <input type="submit" name="Import">
+    </form>
+</div>
 
 {% endblock %}

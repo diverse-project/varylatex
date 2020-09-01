@@ -1,0 +1,33 @@
+.selection-container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: 0 auto;
+    padding: 20px 0;
+    width: 500pt;
+    height: 200pt;
+    border: 1px solid #ccc;
+}
+
+.selection-container form {
+    display: flex;
+    flex-direction: row;
+    margin: auto;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-around;
+    margin: auto;
+    width: 100%;
+}
+
+.buttons button {
+    padding: 10pt;
+    cursor: pointer;
+    border: 1px solid #ccc;
+}
+
+.buttons button:hover {
+    background-color: #ccc;
+}

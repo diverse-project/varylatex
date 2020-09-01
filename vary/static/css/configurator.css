@@ -1,0 +1,53 @@
+.wrapper {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    height: 100%;
+    width: 100%;
+
+    display: grid;
+    background-color: #d3d3d3;
+}
+
+.wrapper .configurator {
+    background-color: #d0d0d0;
+    padding: 1em;
+}
+
+.wrapper .toggle-btn {
+    background-color: #cccccc;
+    border: 1px black solid;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.wrapper .toggle-btn:hover {
+    background-color: #888888;
+}
+
+.wrapper .info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.configurator {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: scroll;
+}
+
+.option-container {
+    padding: 0.25em 0;
+}
+
+#configurator .btn.active{
+    box-shadow:inset 0px 0px 0px 2px black;
+}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<script src="{{ url_for('static', filename = 'js/config_element.js')}}"></script>
+<script src="{{ url_for('static', filename = 'js/free_config.js')}}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/configurator.css')}}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/free_config.css')}}">
+{% endblock %}
+
+{% block body %}
+<div class="wrapper">
+    <div class="configurator" id="configurator">
+        <div id=  "boolDiv" class="option-container"></div>
+        <div id=  "enumDiv" class="option-container"></div>
+        <div id="choiceDiv" class="option-container"></div>
+        <div id="numberDiv" class="option-container"></div>
+    </div>
+    <object type="application/pdf" id="pdf_viewer" class="pdf"></object>
+    <div id="autoGenBtn" class="toggle-btn" onclick="autogen_pressed()">
+        Auto generate missing options : disabled
+    </div>
+    <div class="info">
+        
+    </div>
+</div>
+{% endblock %}
