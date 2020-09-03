@@ -44,5 +44,4 @@ def config_src():
     """
     Gets the config JSON file of the project, which defines the domain of the variables.
     """
-    directory = app.config['UPLOAD_FOLDER']
     return send_from_directory("source", VARIABLE_FILE_NAME)
