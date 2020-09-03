@@ -1,7 +1,7 @@
 import os
 import json
 
-from flask import session, render_template, send_from_directory, request
+from flask import render_template, send_from_directory, request
 
 from vary import app, RESULT_FOLDER
 from vary.model.decision_trees.analysis import eval_options, decision_tree

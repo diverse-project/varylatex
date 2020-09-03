@@ -7,8 +7,8 @@ from shutil import copyfile
 from vary import app
 from vary.model.generation.compile import generate_bbl
 from vary.model.generation.generate import generate_random, generate_pdfs
-from vary.model.files import create_temporary_copy, clear_directory, inject_space_indicator
-from vary.model.decision_trees.analysis import decision_tree
+from vary.model.files.directory import create_temporary_copy, clear_directory
+from vary.model.files.tex_injection import inject_space_indicator
 
 
 @app.route('/compile/<int:generations>', methods=["POST"])

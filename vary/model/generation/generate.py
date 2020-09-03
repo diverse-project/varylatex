@@ -7,7 +7,8 @@ import pandas as pd
 from pandas.core.common import flatten
 from pathlib import Path
 
-from vary.model.files import create_temporary_copy, clear_directory, get_remaining_space, inject_space_indicator
+from vary.model.files.directory import create_temporary_copy, clear_directory
+from vary.model.files.tex_injection import inject_space_indicator, get_remaining_space
 from vary.model.generation.compile import generate_bbl
 from vary.model.generation.inject import write_variables
 from vary.model.generation.compile import compile_latex

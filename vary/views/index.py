@@ -4,8 +4,7 @@ import zipfile
 from flask import flash, request, redirect, url_for, render_template, session
 from werkzeug.utils import secure_filename
 
-from vary import app
-from vary.model.files import check_filename
+from vary import app, ALLOWED_EXTENSIONS
 from vary.model.overleaf_util import fetch_overleaf
 
 
@@ -43,3 +42,10 @@ def import_overleaf():
     key = request.form.get('key')
     fetch_overleaf(key, app.config['UPLOAD_FOLDER'])
     return redirect(url_for('selectfile'))
+
+def check_filename(filename):
+    """
+    Checks the name of an uploaded file to make sure it has the right format
+    """
+    return "." in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
