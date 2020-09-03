@@ -8,7 +8,13 @@ $('document').ready(function(){
 });
 
 function fetch_config_src() {
-    $.get("/config_src", load_config_src);
+    $.ajax({
+        url: "/config_src",
+        type: 'GET',
+        dataType: 'json',
+        cache: false,
+        success: load_config_src
+    });
 }
 
 function load_config_src(config) {
