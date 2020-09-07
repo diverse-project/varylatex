@@ -1,4 +1,4 @@
 .wrapper {
-    grid-template-columns: 30% auto;
+    grid-template-columns: 30% 70%;
     grid-template-rows: auto 5em;
 }

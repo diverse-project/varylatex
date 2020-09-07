@@ -28,6 +28,7 @@ def inject_space_indicator(file_path):
         file.seek(0)  # Go back to the beginning of the file
         file.writelines(lines)
 
+
 def get_remaining_space(path):
     """
     Retrieves the remaining space calculated during the PDF build by the space indicator command.
@@ -37,6 +38,7 @@ def get_remaining_space(path):
     with open(space_file_path) as f:
         content = f.read()
         return float(content[:-3])
+
 
 def get_sub_files(main_file_path):
     """
@@ -51,11 +53,21 @@ def get_sub_files(main_file_path):
                 sub_files.append(match.group(1))
     return sub_files
 
+
 def add_graphics_variables_to_file(file_path):
     """
     Looks for all the 'includegraphics' commands in the file and extracts a variation point on the height/width/size.
     Returns a dictionary with the name of the variables as the keys and their initial values as the values.
     """
+    dir_path, filename = os.path.split(file_path)
+    if not filename.endswith(".tex"):
+        filename += ".tex"
+        file_path = os.path.join(dir_path, filename)
+
+    if not os.path.isfile(file_path):
+        return {}
+    
+
     graphics_pattern = re.compile(r"^[^%]*(\\includegraphics\[([^\]]*)\]\{([^}]*)}).*")
     param_pattern = re.compile(r"(\w+)\s*=\s*([\d.]+)(.*)")
     variables = {}
@@ -82,6 +94,7 @@ def add_graphics_variables_to_file(file_path):
         f.writelines(lines)
     return variables
 
+
 def float_variable_to_range(variable):
     """
     Creates a range of values based on a central float value.
@@ -94,6 +107,7 @@ def float_variable_to_range(variable):
     max_val = round(variable*1.3, precision)
     return [min_val, max_val, precision]
 
+
 def add_graphics_variables(main_file_path):
     (base_path, filename) = os.path.split(main_file_path)
     subfiles = [os.path.join(base_path, name) for name in get_sub_files(main_file_path)]
@@ -105,7 +119,9 @@ def add_graphics_variables(main_file_path):
     config_path = os.path.join(base_path, "variables.json")
     merge_configs(config_path, {"numbers": variables})
 
+
 def add_include_macros_variables(main_file_path):
+    print("ALLO")
     to_inject = ""
     with open(main_file_path) as f:
         content = f.read()
@@ -117,15 +133,20 @@ def add_include_macros_variables(main_file_path):
             content.index(r"\include{values}")
         except ValueError:
             to_inject += "\\include{values}\n"
+
+    print(to_inject)
     if to_inject:
-        documentclass_pattern = re.compile(r"\\documentclass{[^}]*}")
+        documentclass_pattern = re.compile(r"\\documentclass(\[[^\]]*\])*{[^}]*}")
         with open(main_file_path, "r+") as f:
             lines = f.readlines()
             for index, line in enumerate(lines):
                 match = documentclass_pattern.search(line)
                 if match:
                     break
+            print("index")
+            print(index)
             if match:
+                print(index+1)
                 lines.insert(index + 1, to_inject)
             f.seek(0)
             f.writelines(lines)

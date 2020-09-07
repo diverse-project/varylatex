@@ -1,6 +1,7 @@
 import os
 import json
 
+
 def merge_configs(json_config_path, config):
     """
     Adds the variables contained in config to the json config file
@@ -10,6 +11,7 @@ def merge_configs(json_config_path, config):
         res_conf = merge_dicts(conf_source, config)
     with open(json_config_path, 'w') as f:
         json.dump(res_conf, f, indent=4)
+
 
 def merge_dicts(base_dict, second_dict):
     """
@@ -29,6 +31,7 @@ def merge_dicts(base_dict, second_dict):
         else:
             output_dict[key] = value
     return output_dict
+
 
 def init_variables_json(path):
     """
