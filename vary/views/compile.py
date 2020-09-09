@@ -30,7 +30,8 @@ def build_pdf():
         resp.headers['Cache-Control'] = 'max-age=0, no-cache, must-revalidate'
         return resp
 
-    config = request.form
+    config = request.json
+    print(config)
     output = "vary/results"
     source = os.path.join(app.config['UPLOAD_FOLDER'])
     temp_path = create_temporary_copy(source)

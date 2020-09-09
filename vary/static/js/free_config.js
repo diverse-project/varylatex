@@ -151,7 +151,15 @@ function autogen_pressed() {
 
 function build_pdf() {
     let pdf_viewer = document.getElementById('pdf_viewer');
-    $.post('/build_pdf', CONFIG).then(()=>{
-        pdf_viewer.data = "/build_pdf"
+
+    $.ajax({
+        url: "/build_pdf",
+        dataType: "json",
+        contentType: "application/json",
+        type: "POST",
+        data: JSON.stringify(CONFIG),
+        success: result => {
+            pdf_viewer.data = "/build_pdf";
+        }
     })
 }

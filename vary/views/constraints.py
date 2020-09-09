@@ -4,7 +4,7 @@ import json
 from flask import render_template, send_from_directory, request
 
 from vary import app, RESULT_FOLDER
-from vary.model.decision_trees.analysis import eval_options, decision_tree
+from vary.model.decision_trees.analysis import eval_options, decision_tree, visualize_tree
 
 @app.route('/constraints')
 def constraints():
@@ -27,6 +27,9 @@ def predict(max_pages):
     csv_path = os.path.join(RESULT_FOLDER, "result.csv")
 
     classifier, features = decision_tree(csv_path, max_pages)
+
+    tree_path = os.path.join(RESULT_FOLDER, "dt.png")
+    visualize_tree(classifier, features, RESULT_FOLDER)
 
     probas = eval_options(classifier, config, conf_source, features)
     return json.dumps(probas)

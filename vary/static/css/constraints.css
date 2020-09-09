@@ -39,8 +39,12 @@
     max-height: 300px;
     overflow: scroll;
     border: 2px black solid;
+    width: 100%;
 }
 
+.table-container table {
+    margin: auto;
+}
 
 .gen-options, .div-configurator {
     width: 70%;

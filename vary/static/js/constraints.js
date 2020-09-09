@@ -46,6 +46,7 @@ function compile(reset) {
     }
 
     $.post(route, {'reset' : reset} ,csv => {
+        has_data = true;
         let parsedCSV = d3.csv.parseRows(csv);
         let table = d3.select("#results");
         if (reset)
@@ -81,8 +82,15 @@ function build_pdf(data) {
     delete data[""]
     let pdf_viewer = document.getElementById("pdf_viewer");
     pdf_viewer.data = "";
-    $.post('/build_pdf', data).then(()=>{
-        pdf_viewer.data = "/build_pdf"
+    $.ajax({
+        url: "/build_pdf",
+        dataType: "json",
+        contentType: "application/json",
+        type: "POST",
+        data: JSON.stringify(data),
+        success: result => {
+            pdf_viewer.data = "/build_pdf";
+        }
     })
 }
 
@@ -224,40 +232,41 @@ function update_selector() {
 }
 
 function update_background_enum(select) {
-    for (option of select.options) {
+    
+    for (option in select.options) {
 
-        let value = option.value;
+        let value = select.options[option];
         let proba;
         if (value == null)
             proba = PROBAS["enums"][select.name]["default"];
         else
             proba = PROBAS["enums"][select.name]["values"][value];
-        option.color = gradient(proba * 100, RED, GREEN);
+        
+        select.setColor(option, gradient(proba * 100, RED, GREEN));
     }
-    set_background(select.selection_div, select.selected_option.color);
+    //set_background(select.selection_div, select.selected_option.color);
     
 }
 
 function update_background_bool(select) {
-    for (option of select.options) {
-
-        let value = option.value;
+    for (option in select.options) {
+        let value = select.options[option];
         let proba;
         if (value == null)
             proba = PROBAS["booleans"][select.name]["default"];
         else
             proba = PROBAS["booleans"][select.name][value ? "true" : "false"];
-        option.color = gradient(proba * 100, RED, GREEN);
+        select.setColor(option, gradient(proba * 100, RED, GREEN));
     }
-    set_background(select.selection_div, select.selected_option.color);
+    //set_background(select.selection_div, select.selected_option.color);
     
 }
 
 function update_background_choice(select) {
-    for (option of select.options) {
-        let value = option.value;
-        let proba = PROBAS["choices"][option.name];
-        option.color = gradient(proba * 100, RED, GREEN);
+    for (option in select.options) {
+        let value = select.options[option];
+        let proba = PROBAS["choices"][option];
+        select.setColor(option, gradient(proba * 100, RED, GREEN));
     }
     // TODO set background (need to compute the probability for any of them)
 }

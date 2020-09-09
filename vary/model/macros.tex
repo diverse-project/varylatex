@@ -18,18 +18,18 @@
 
 % Helper command to make a custom if condition and know if the value has been set
 % Usage : \ifVal{name}{content}
-\newcommand\ifVal[2]{
-    \ifcsname vary@#1\endcsname
-    #2
-    \fi
-}
+\newcommand\ifVal[2]{%
+    \ifcsname vary@#1\endcsname%
+    #2%
+    \fi%
+}%
 
 % Helper command to make a custom if condition and know if the value has been set
 % Usage : \ifValElse{name}{content if true}{content if false}
-\newcommand\ifValElse[3]{
-    \ifcsname vary@#1\endcsname
-    #2
-    \else
-    #3
-    \fi
-}
+\newcommand\ifValElse[3]{%
+    \ifcsname vary@#1\endcsname%
+    #2%
+    \else%
+    #3%
+    \fi%
+}%

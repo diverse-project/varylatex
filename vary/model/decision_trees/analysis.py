@@ -131,7 +131,6 @@ def predict(classifier, config, config_src, features):
         # If the value is defined then follow the corresponding path, otherwise work on the populations
         # on the two branches
         if value is not None:
-            print(ft)
             if value == "true":
                 value = 1
             if value == "false":

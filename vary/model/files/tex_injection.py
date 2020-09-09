@@ -121,7 +121,6 @@ def add_graphics_variables(main_file_path):
 
 
 def add_include_macros_variables(main_file_path):
-    print("ALLO")
     to_inject = ""
     with open(main_file_path) as f:
         content = f.read()
