@@ -31,7 +31,6 @@ def build_pdf():
         return resp
 
     config = request.json
-    print(config)
     output = "vary/results"
     source = os.path.join(app.config['UPLOAD_FOLDER'])
     temp_path = create_temporary_copy(source)

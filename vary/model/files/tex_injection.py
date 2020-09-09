@@ -133,7 +133,6 @@ def add_include_macros_variables(main_file_path):
         except ValueError:
             to_inject += "\\include{values}\n"
 
-    print(to_inject)
     if to_inject:
         documentclass_pattern = re.compile(r"\\documentclass(\[[^\]]*\])*{[^}]*}")
         with open(main_file_path, "r+") as f:
@@ -142,10 +141,7 @@ def add_include_macros_variables(main_file_path):
                 match = documentclass_pattern.search(line)
                 if match:
                     break
-            print("index")
-            print(index)
             if match:
-                print(index+1)
                 lines.insert(index + 1, to_inject)
             f.seek(0)
             f.writelines(lines)
