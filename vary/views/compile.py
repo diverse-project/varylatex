@@ -11,15 +11,21 @@ from vary.model.files.directory import create_temporary_copy, clear_directory
 from vary.model.files.tex_injection import inject_space_indicator
 
 
-@app.route('/compile/<int:generations>', methods=["POST"])
+@app.route('/generate_pdfs/<int:generations>', methods=["POST"])
 def compile_pdfs(generations, reset=True):
     output = "vary/results"
+    fixed_values = request.json or {}
+    print(request.json)
+    print(fixed_values)
     filename = session['main_file_name'].replace(".tex", "")  # main file name without extension
     source = app.config['UPLOAD_FOLDER']  # The project is located in the "source" folder
-    reset = request.form.get("reset") == 'true'
 
-    generate_pdfs(filename, source, output, generations, reset)
+    generate_pdfs(filename, source, output, generations, reset, fixed_values)
     return send_from_directory("results", "result.csv")
+
+@app.route('/add_pdfs/<int:generations>', methods=["POST"])
+def add_pdfs(generations):
+    return compile_pdfs(generations, reset=False)
 
 
 @app.route('/build_pdf', methods=['GET', 'POST'])

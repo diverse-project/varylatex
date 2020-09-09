@@ -38,44 +38,57 @@ function compile(reset) {
 
     label.innerText = (reset ? "Generating" : "Adding" ) + " " + amount + " documents";
 
-    route = '/compile/' + amount;
+    route = '/generate_pdfs/' + amount;
     if (reset) {
         document.getElementsByClassName("table-container")[0].style["visibility"] = "hidden";
         table.getElementsByTagName("thead")[0].innerHTML = "";
         table.getElementsByTagName("tbody")[0].innerHTML = "";
     }
 
-    $.post(route, {'reset' : reset} ,csv => {
-        has_data = true;
-        let parsedCSV = d3.csv.parseRows(csv);
-        let table = d3.select("#results");
-        if (reset)
-            table.select("thead")
-                .selectAll("th")
-                    .data(parsedCSV[0]).enter()
-                    .append("th")
-                    .text(d => d)
+    let data = filter_generation ? JSON.stringify(CONFIG) : "{}"
 
-        let new_rows = table.select("tbody")
-            .selectAll("tr")
-            .data(d3.csv.parse(csv))
-            .enter()
-            .append("tr")
-        new_rows.selectAll("td")
-                    .data(function(d) { return Object.values(d); }).enter()
-                    .append("td")
-                    .text(function(d) { return d; });
-        
-        new_rows.append("td")
-                .append("button")
-                .text("PDF")
-                .on("click", build_pdf);
-        
-        document.getElementsByClassName("table-container")[0].style["visibility"] = "visible";
-        document.getElementById("addBtn").disabled = false;
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: route,
+        data: data,
+        success: csv => fill_table(csv, reset),
 
-        label.innerText = "";
-    }).then(refresh_probas)
+    }).then(() => {
+        label.innerHTML = "<a href='/tree_img' target='_blank'>See decision tree</a>";
+        refresh_probas();
+    })
+}
+
+function fill_table(csv, reset) {
+    console.log("OUI")
+    has_data = true;
+    let parsedCSV = d3.csv.parseRows(csv);
+    let table = d3.select("#results");
+    if (reset)
+        table.select("thead")
+            .selectAll("th")
+                .data(parsedCSV[0]).enter()
+                .append("th")
+                .text(d => d)
+
+    let new_rows = table.select("tbody")
+        .selectAll("tr")
+        .data(d3.csv.parse(csv))
+        .enter()
+        .append("tr")
+    new_rows.selectAll("td")
+                .data(function(d) { return Object.values(d); }).enter()
+                .append("td")
+                .text(function(d) { return d; });
+    
+    new_rows.append("td")
+            .append("button")
+            .text("PDF")
+            .on("click", build_pdf);
+    
+    document.getElementsByClassName("table-container")[0].style["visibility"] = "visible";
+    document.getElementById("addBtn").disabled = false;
 }
 
 function build_pdf(data) {
@@ -292,7 +305,7 @@ function refresh_probas() {
 function filter_pressed() {
     let filterBtn = document.getElementById('filterBtn');
     
-    if (filter) {
+    if (filter_generation) {
         filterBtn.classList.add("active");
         
     } else {
@@ -300,6 +313,6 @@ function filter_pressed() {
         
     }
     
-    filter = ! filter;
-    filterBtn.innerText = `Generate documents using these constraints : ${filter? "enabled" : "disabled"}`;
+    filter_generation = ! filter_generation;
+    filterBtn.innerText = `Generate documents using these constraints : ${filter_generation? "enabled" : "disabled"}`;
 }

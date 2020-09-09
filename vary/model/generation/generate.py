@@ -83,10 +83,10 @@ def generate_random(conf_source, filename, temp_path, fixes_values={}):
     return generate_pdf(config, filename, temp_path)
 
 
-def generate_pdfs(filename, source, output, nb_gens, reset=True):
+def generate_pdfs(filename, source, output, nb_gens, reset=True, fixed_values = {}):
     """
     Creates as many PDFs as specified with nb_gens, from a random config based on conf_source, and calculate
-    their values. The config and values are stores in a "result.csv" file in the output directory.
+    their values. The config and values are stored in a "result.csv" file in the output directory.
     If reset is set to False and there is already a result file, the results are appended to the previous ones.
     """
     temp_path = create_temporary_copy(source)  # Create the temporary working directory
@@ -104,7 +104,7 @@ def generate_pdfs(filename, source, output, nb_gens, reset=True):
     df = _create_df(conf_source) if reset else pd.read_csv(csv_result_path, index_col=0)
 
     for _ in range(nb_gens):
-        row = generate_random(conf_source, filename, temp_path)
+        row = generate_random(conf_source, filename, temp_path, fixed_values)
         df = df.append(row, ignore_index=True)
 
     # Clean working directory
