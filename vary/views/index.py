@@ -44,8 +44,10 @@ def upload_project():
 
 @app.route('/import_overleaf', methods=['POST'])
 def import_overleaf():
+    upload_folder = app.config['UPLOAD_FOLDER']
     key = request.form.get('key')
-    fetch_overleaf(key, app.config['UPLOAD_FOLDER'])
+    clear_directory(upload_folder)  # Delete potential previous project
+    fetch_overleaf(key, upload_folder)
     return redirect(url_for('selectfile'))
 
 def check_filename(filename):

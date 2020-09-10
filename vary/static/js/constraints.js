@@ -4,6 +4,7 @@ let has_data = false;
 let filter_generation = false;
 
 let nb_variables = 0;
+let max_pages = 5;
 
 const RED = "#ff2020";
 const GREEN = "#20ff20";
@@ -13,6 +14,14 @@ const bool_selects = [];
 const choice_selects = [];
 
 $('document').ready(function(){
+    document.getElementById("maxPages").addEventListener("input", function() {
+        if (this.value !== "") {
+            if (this.value > 0) {
+                max_pages = this.value;
+            }
+        }
+    })
+
     let pdf_viewer = document.getElementById("pdf_viewer");
     pdf_viewer.data="";
 
@@ -61,7 +70,6 @@ function compile(reset) {
 }
 
 function fill_table(csv, reset) {
-    console.log("OUI")
     has_data = true;
     let parsedCSV = d3.csv.parseRows(csv);
     let table = d3.select("#results");
@@ -286,7 +294,6 @@ function update_background_choice(select) {
 
 function refresh_probas() {
     if (!has_data) return;
-    let max_pages = 4;
     let url = "/predict/" + max_pages;
 
     $.ajax({

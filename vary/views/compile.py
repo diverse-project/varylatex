@@ -15,8 +15,6 @@ from vary.model.files.tex_injection import inject_space_indicator
 def compile_pdfs(generations, reset=True):
     output = "vary/results"
     fixed_values = request.json or {}
-    print(request.json)
-    print(fixed_values)
     filename = session['main_file_name'].replace(".tex", "")  # main file name without extension
     source = app.config['UPLOAD_FOLDER']  # The project is located in the "source" folder
 
