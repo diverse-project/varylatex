@@ -7,7 +7,7 @@ import pandas as pd
 from pandas.core.common import flatten
 from pathlib import Path
 
-from vary.model.files.directory import create_temporary_copy, clear_directory
+from vary.model.files.directory import create_temporary_copy, remove_directory
 from vary.model.files.tex_injection import inject_space_indicator, get_remaining_space
 from vary.model.generation.compile import generate_bbl
 from vary.model.generation.inject import write_variables
@@ -108,7 +108,7 @@ def generate_pdfs(filename, source, output, nb_gens, reset=True, fixed_values = 
         df = df.append(row, ignore_index=True)
 
     # Clean working directory
-    clear_directory(os.path.dirname(temp_path))
+    remove_directory(temp_path)
     # Create the output directory
     Path(output).mkdir(parents=True, exist_ok=True)
     # Export results to CSV

@@ -1,5 +1,6 @@
 import os
 import shutil
+import time
 
 def clear_directory(path):
     """
@@ -11,13 +12,20 @@ def clear_directory(path):
         for d in dirs:
             shutil.rmtree(os.path.join(root, d))
 
+def remove_directory(path):
+    """
+    Removes a directory and its content
+    """
+    shutil.rmtree(path)
+
 
 def create_temporary_copy(path):
     """
     Creates a working directory with a copy of the project files, that can  be altered by the program
     and used for the compilations.
     """
-    tmp_path = os.path.join(os.getcwd(), "vary/build/latex")
+    timestamp = str(time.time())
+    tmp_path = os.path.join(os.getcwd(), "vary/build", timestamp)
     try:
         shutil.copytree(path, tmp_path)
         macro_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], "../macros.tex")

@@ -7,7 +7,7 @@ from shutil import copyfile
 from vary import app
 from vary.model.generation.compile import generate_bbl
 from vary.model.generation.generate import generate_random, generate_pdfs
-from vary.model.files.directory import create_temporary_copy, clear_directory
+from vary.model.files.directory import create_temporary_copy, remove_directory
 from vary.model.files.tex_injection import inject_space_indicator
 
 
@@ -56,5 +56,5 @@ def build_pdf():
         os.path.join(temp_path, filename + ".pdf"),
         os.path.join(outpath)
     )
-    clear_directory(os.path.dirname(temp_path))
+    remove_directory(temp_path)
     return '{"success":true}', 200, {'ContentType': 'application/json'}
