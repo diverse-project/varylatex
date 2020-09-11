@@ -109,7 +109,7 @@ def float_variable_to_range(variable):
 
 
 def add_graphics_variables(main_file_path):
-    (base_path, filename) = os.path.split(main_file_path)
+    base_path = os.path.dirname(main_file_path)
     subfiles = [os.path.join(base_path, name) for name in get_sub_files(main_file_path)]
     subfiles.append(main_file_path)
     variables = {}
@@ -145,3 +145,20 @@ def add_include_macros_variables(main_file_path):
                 lines.insert(index + 1, to_inject)
             f.seek(0)
             f.writelines(lines)
+
+def add_itemsep_variable(main_file_path):
+    include_values_pattern = re.compile(r"\\include{values}")
+    with open(main_file_path, "r+") as f:
+        lines = f.readlines()
+        for index, line in enumerate(lines):
+            match = include_values_pattern.search(line)
+            if match:
+                break
+        if match:
+            lines.insert(index + 1, r"\setlength\itemsep{\getVal{itemsep}pt}")
+        f.seek(0)
+        f.writelines(lines)
+    itemsep_dict = {"numbers": {"itemsep": [-5, 5, 1]}}
+    base_path = os.path.dirname(main_file_path)
+    config_path = os.path.join(base_path, "variables.json")
+    merge_configs(config_path, itemsep_dict)

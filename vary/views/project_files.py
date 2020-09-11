@@ -5,7 +5,7 @@ import re
 from flask import request, redirect, url_for, render_template, session, send_from_directory
 
 from vary import app
-from vary.model.files.tex_injection import add_graphics_variables, add_include_macros_variables
+from vary.model.files.tex_injection import add_graphics_variables, add_include_macros_variables, add_itemsep_variable
 
 VARIABLE_FILE_NAME = "variables.json"
 
@@ -59,6 +59,9 @@ def auto_variables():
         form = request.form
         if form.get('generateImageSizes'):
             add_graphics_variables(main_file_path)
+        if form.get("generateItemsep"):
+            add_itemsep_variable(main_file_path)
+
         return redirect(url_for('mode'))
 
     else:
