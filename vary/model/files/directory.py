@@ -44,3 +44,13 @@ def create_dir(path):
     Creates a directory with the specified path if it does not already exists
     """
     Path(path).mkdir(parents=True, exist_ok=True)
+
+def get_secret_key(path):
+    if os.path.isfile(path):
+        with open(path, 'rb') as f:
+            return f.read()
+    else:
+        key = os.urandom(16)
+        with open(path, 'ab') as f:
+            f.write(key)
+        return key
