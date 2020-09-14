@@ -47,7 +47,7 @@ function compile(reset) {
 
     label.innerText = (reset ? "Generating" : "Adding" ) + " " + amount + " documents";
 
-    route = '/generate_pdfs/' + amount;
+    route = (reset ? '/generate_pdfs/' : '/add_pdfs/') + amount;
     if (reset) {
         document.getElementsByClassName("table-container")[0].style["visibility"] = "hidden";
         table.getElementsByTagName("thead")[0].innerHTML = "";
