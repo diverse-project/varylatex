@@ -13,6 +13,10 @@ from vary.model.files.tex_injection import inject_space_indicator
 
 @app.route('/generate_pdfs/<int:generations>', methods=["POST"])
 def compile_pdfs(generations, reset=True):
+    """
+    Builds the specified amount of documents. If reset is set to True,
+    discards the data about the previouslly generated documents.
+    """
     output = "vary/results"
     fixed_values = request.json or {}
     filename = session['main_file_name'].replace(".tex", "")  # main file name without extension
@@ -23,11 +27,18 @@ def compile_pdfs(generations, reset=True):
 
 @app.route('/add_pdfs/<int:generations>', methods=["POST"])
 def add_pdfs(generations):
+    """
+    Builds the specified amount of documents and append them to the previously generated ones.
+    """
     return compile_pdfs(generations, reset=False)
 
 
 @app.route('/build_pdf', methods=['GET', 'POST'])
 def build_pdf():
+    """
+    Creates and returns a PDF that follows the specified configuration.
+    If some variables are not specified, a random value is chosen for it.
+    """
     filename = session['main_file_name'].replace(".tex", "")
     if request.method == "GET":
         resp = send_from_directory("results", filename + ".pdf")

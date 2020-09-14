@@ -10,6 +10,10 @@ import pandas as pd
 
 
 def visualize_tree(tree, feature_names, output_path):
+    """
+    Creates a PNG image of a decision tree and exports it in the folder specified bu output_path.
+    The name of the image is dt.png.
+    """
     dot_path = os.path.join(output_path, "dt.dot")
     img_path = os.path.join(output_path, "dt.png")
     with open(dot_path, 'w') as f:
