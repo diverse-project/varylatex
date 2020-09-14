@@ -2,6 +2,8 @@ import os
 import shutil
 import time
 
+from pathlib import Path
+
 def clear_directory(path):
     """
     Removes the content of a directory without removing the directory itself
@@ -35,3 +37,10 @@ def create_temporary_copy(path):
         print("Error creating the temporary copy")
 
     return tmp_path
+
+
+def create_dir(path):
+    """
+    Creates a directory with the specified path if it does not already exists
+    """
+    Path(path).mkdir(parents=True, exist_ok=True)

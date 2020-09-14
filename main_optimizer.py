@@ -5,10 +5,10 @@ import shutil
 
 import pandas as pd
 from pandas.core.common import flatten
-from pathlib import Path
 
 from vary.model.overleaf_util import fetch_overleaf
-from vary.model.files import clear_directory, create_temporary_copy, inject_space_indicator
+from vary.model.files.directory import clear_directory, create_temporary_copy, create_dir
+from vary.model.files.tex_injection import inject_space_indicator
 from vary.model.generation.generate import generate_random, generate_pdf
 from vary.model.generation.compile import generate_bbl
 from vary.model.decision_trees.analysis import decision_tree
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     # Clean working directory
     shutil.rmtree(temp_path)
     # Create the output directory
-    Path(args.output).mkdir(parents=True, exist_ok=True)
+    create_dir(args.output)
     # Export results to CSV
     result_path = os.path.join(args.output, "result.csv")
     df.to_csv(result_path)
