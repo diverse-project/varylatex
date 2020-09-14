@@ -12,4 +12,4 @@ pip install -r requirements.txt
 python optimizer.py
 ```
 
-To learn about the implementation in terms of LaTeX macros, see [about.md](about.md)
+To learn about the implementation in terms of LaTeX macros, see [about.md](docs/about.md)

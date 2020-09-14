@@ -8,11 +8,13 @@ Variability can be added to your LaTeX document by two manners :
 
 ## Apply Variability
 
-To use the variables, you need add those two lines in your source document :
+To use the variables, you may want to add those two lines in your source document :
 ```tex
 \include{macros}
 \include{values}
 ```
+If you don't, the app will do it for you but your document won't be able to compile with another tool (overleaf, `latexmk`...).
+
 You can get the value of a variable with
 ```tex
 \getVal{valName} % Expands to the value
@@ -43,14 +45,15 @@ In this file you can declare four types of variable domains :
 - `"numbers"` : A JSON object mapping the name of the variable with an array of length 3, containing the minimum, the maximum, and the precision of the value.
 - `"enums"` : A JSON object mapping the name of a variable with an array of all the possible values it can take.
 - `"choices"` : An array of arrays (groups) of booleans, where exactly one boolean is set to `true` for each group.
-An example of a `variables.json` file can be found [there](https://github.com/diverse-project/varylatex/blob/ec912cbdc3d38c512b52b28313ebcc481bdedc33/vary/example/fse/variables.json)
+An example of a `variables.json` file can be found [there](../vary/example/fse/variables.json)
 
 
 ## Manually setting variables
 
-If you wand to still be able to work with a preview of your document, you need to add the [macro.tex](https://github.com/diverse-project/varylatex/blob/861e7639be1e900cd893f847441cbf5d1b7f5ad4/vary/model/macros.tex) file in the source folder, and add definitions of the variables' values in a file called `values.tex`, in the same folder.
+If you want to still be able to work with a preview of your document, you need to add the [macros.tex](../vary/model/macros.tex) file in the source folder, and add definitions of the variables' values in a file called `values.tex`, in the same folder.
 To define the variables you need to use the provided `defVal` command :
 ```tex
 \defVal{valName}{} % Used for booleans set to true
 \defVal{valName}{value} % For variables that store a value
 ```
+Note : to represent a boolean set to false, you just need to not define it.

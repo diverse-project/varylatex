@@ -146,6 +146,7 @@ def add_include_macros_variables(main_file_path):
             f.seek(0)
             f.writelines(lines)
 
+
 def add_itemsep_variable(main_file_path):
     include_values_pattern = re.compile(r"\\include{values}")
     with open(main_file_path, "r+") as f:
