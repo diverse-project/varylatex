@@ -22,8 +22,9 @@
 
 <div id="overleafDiv" class="tab-content">
     <form method="POST" action="/import_overleaf">
-        <h2>Paste Overleaf invite key</h2>
-        <input type="text" name="key" placeholder="xctzbtbhcxnj">
+        <h2>Paste Overleaf read-only invite key</h2>
+        <label for="key">https://www.overleaf.com/read/</label>
+        <input type="text" name="key" id="key" placeholder="KEY">
         <input type="submit" name="Import">
     </form>
 </div>
