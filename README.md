@@ -19,7 +19,7 @@ You can also run the app within a `Docker` container : to do this, install docke
 # Create the image
 sudo docker build -t varylatex .
 # Create the container
-sudo docker run -it --rm --name -p 5000:5000 varylatex
+sudo docker run -it --rm -p 5000:5000 varylatex
 ```
 And inside the container you can run
 ```bash
