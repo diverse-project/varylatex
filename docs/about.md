@@ -1,5 +1,5 @@
 # Motivation
-With this implementation of VaryLaTeX we want to provide to the user a way to add variability to a LaTeX document, to help them either  customize a document, or treak it to match some requirements. For instance, one may want a document that fits on a maximum of 10 pages.
+With this implementation of VaryLaTeX we want to give the user a way to add variability to a LaTeX document, to help them either  customize a document, or tweak it to match some requirements. For instance, one may want a document that fits on a maximum of 10 pages.
 
 # Adding variability
 
