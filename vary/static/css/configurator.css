@@ -12,6 +12,11 @@
     background-color: #d3d3d3;
 }
 
+.wrapper .pdf {
+  width: 100%;
+  height: 100%;
+}
+
 .wrapper .configurator {
     background-color: #d0d0d0;
     padding: 1em;
