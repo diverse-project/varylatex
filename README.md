@@ -1,6 +1,19 @@
 # VaryLaTeX
 
-It's a complete rewrite/extension of https://github.com/FAMILIAR-project/varylatex
+How to submit a research paper, a technical report, a grant proposal , or a curriculum vitae that respect imposed constraints such as formatting instructions and page limits? It is a [challenging)(https://twitter.com/mark_riedl/status/1219800144188772354) [task](https://twitter.com/zacharylipton/status/1282700969386684422), especially when coping with time pressure, isn't it? VaryLaTeX is a solution based on variability, constraint programming , and machine learning techniques for documents written in LaTeX to meet constraints and deliver on time. 
+**You simply have to drop your archive into your Web browser: VaryLaTeX makes automatically vary your PDF to fit the pages limit... and if you're unhappy, you can control different aspects of your document with a configurator** 
+
+![Alt Text](http://phdcomics.com/comics/archive/phd090617s.gif)
+http://phdcomics.com/comics.php?f=1971
+
+VaryLaTeX allows users annotating LaTeX source files with variability information, e.g., (de)activating portions of text, tuning figures' sizes, or tweaking line spacing. Then, a fully automated procedure learns constraints among Boolean and numerical values for avoiding non-acceptable paper variants, and finally, users can further configure their papers (e.g., aesthetic considerations) or pick a (random) paper variant that meets constraints, e.g., page limits. 
+
+It's a complete rewrite/extension of https://github.com/FAMILIAR-project/varylatex 
+*Feel free to contribute, suggest features, provide feedbacks, use cases* 
+
+There is a short demonstration: https://www.youtube.com/watch?v=u1ralqbHCyM&list=PLcDsXHkK7hJ3n9v7VAMbZCIV6egreI8OL and some technical explanations in this Youtube playlist
+
+## How to run VaryLaTeX?
 
 To initiate the work, we build upon the implementation described on this blog post [LaTeX writing as a constrained non-convex optimization problem](https://blog.martisak.se/2020/06/06/latex-optimizer/) and available on gitlab: https://gitlab.com/martisak/latex-optimizer/ 
 (note: "fork" of gitlab as described here: http://ruby.zigzo.com/2015/03/23/moving-from-gitlab-to-github/) 
@@ -27,3 +40,8 @@ python main_server.py
 ```
 
 To learn about the implementation and the choices that were made for the project, see [about.md](docs/about.md).
+
+## Publications
+
+More details can be found in the following paper, published/presented at 12th International Workshop on Variability Modelling of Software-Intensive Systems https://vamos2018.wordpress.com/:
+"VaryLaTeX: Learning Paper Variants That Meet Constraints" by Mathieu Acher, Paul Temple, Jean-Marc Jézéquel, José A. Galindo, Jabier Martinez, Tewfik Ziadi: https://hal.inria.fr/hal-01659161/
