@@ -1,12 +1,12 @@
 # VaryLaTeX
 
 How to submit a research paper, a technical report, a grant proposal , or a curriculum vitae that respect imposed constraints such as formatting instructions and page limits? It is a [challenging](https://twitter.com/mark_riedl/status/1219800144188772354) [task](https://twitter.com/zacharylipton/status/1282700969386684422), especially when coping with time pressure, isn't it? 
-**With VaryLaTeX, simply drop your archive into your Web browser... VaryLaTeX makes automatically vary your PDF to fit the pages limit... and if you're unhappy, you can control different aspects of your document with a configurator** 
+With VaryLaTeX, simply drop your archive into your Web browser! VaryLaTeX makes automatically vary your PDF to fit the pages limit... and if you're unhappy, you can control different aspects of your document with a configurator. 
 
 ![Alt Text](http://phdcomics.com/comics/archive/phd090617s.gif)
 http://phdcomics.com/comics.php?f=1971
 
-VaryLaTeX allows users annotating LaTeX source files with variability information, e.g., (de)activating portions of text, tuning figures' sizes, or tweaking line spacing. Then, a fully automated procedure learns constraints among Boolean and numerical values for avoiding non-acceptable paper variants, and finally, users can further configure their papers (e.g., aesthetic considerations) or pick a (random) paper variant that meets constraints, e.g., page limits. 
+VaryLaTeX is a solution based on variability, constraint programming , and machine learning techniques for documents written in LaTeX to meet constraints and deliver on time. VaryLaTeX allows users annotating LaTeX source files with variability information, e.g., (de)activating portions of text, tuning figures' sizes, or tweaking line spacing. Then, a fully automated procedure learns constraints among Boolean and numerical values for avoiding non-acceptable paper variants, and finally, users can further configure their papers (e.g., aesthetic considerations) or pick a (random) paper variant that meets constraints, e.g., page limits. 
 
 It's a complete rewrite/extension of https://github.com/FAMILIAR-project/varylatex 
 *Feel free to contribute, suggest features, provide feedbacks, use cases* 
