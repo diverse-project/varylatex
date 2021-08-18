@@ -31,6 +31,7 @@ You can also run the app within a `Docker` container : to do this, install docke
 sudo docker build -t varylatex .
 # Create the container
 sudo docker run -it --rm -p 5000:5000 varylatex
+# In case you want to rely on a prebuild image there is one at https://hub.docker.com/r/diversolab/varylatex
 ```
 And inside the container you can run
 ```bash
