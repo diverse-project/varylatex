@@ -82,6 +82,7 @@ if __name__ == "__main__":
         for i in range(args.generations):
             if args.feature_model:
                 row = getRandomProduct(products)
+                row = generate_pdf(row, filename, temp_path)
             else:
                 row = generate_random(conf_source, filename, temp_path)
                 
