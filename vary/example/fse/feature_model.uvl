@@ -1,0 +1,38 @@
+imports 
+
+features
+    Paper { abstract }
+        optional
+            PL_FOOTNOTE
+            ACK
+            LONG_AFFILIATION
+            EMAIL
+            LONG_ACK
+        mandatory
+            JS_STYLE { abstract }
+                alternative
+                    tiny
+                    scriptsize
+                    footnotesize
+            CHOICES { abstract }
+                or
+                    PARAGRAPH_ACK
+                    BOLD_ACK
+            vspace_bib { abstract }
+                alternative
+                    vspace_UNO
+                    vspace_CINCO
+                    vspace_DOS
+            bref_size { abstract }
+                alternative
+                    bref_size_CERO_SIETE
+                    bref_size_UNO
+                    bref_size_DOS
+            cserver_size { abstract }
+                alternative
+                    cserver_size_CERO_SEIS
+                    cserver_size_CERO_NUEVE
+                    cserver_size_DOS
+
+constraints
+
