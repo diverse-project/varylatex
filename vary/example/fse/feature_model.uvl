@@ -20,19 +20,19 @@ features
                     BOLD_ACK
             vspace_bib { abstract }
                 alternative
-                    vspace_UNO
-                    vspace_CINCO
-                    vspace_DOS
+                    vspace_ONE
+                    vspace_FIVE
+                    vspace_TWO
             bref_size { abstract }
                 alternative
-                    bref_size_CERO_SIETE
-                    bref_size_UNO
-                    bref_size_DOS
+                    bref_size_POINT_SEVEN
+                    bref_size_ONE
+                    bref_size_TWO
             cserver_size { abstract }
                 alternative
-                    cserver_size_CERO_SEIS
-                    cserver_size_CERO_NUEVE
-                    cserver_size_DOS
+                    cserver_size_POINT_SIX
+                    cserver_size_POINT_NINE
+                    cserver_size_TWO
 
 constraints
 

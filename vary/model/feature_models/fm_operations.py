@@ -30,29 +30,29 @@ def transcodeProducts(rawProducts):
         else:
             r["LONG_ACK"]=False
         
-        if "vspace_UNO" in result:
+        if "vspace_ONE" in result:
             r["vspace"]=1
-        elif "vspace_CINCO" in result:
+        elif "vspace_FIVE" in result:
             r["vspace"]=5
-        elif "vspace_DOS" in result:
+        elif "vspace_TWO" in result:
             r["vspace"]=2
         else:
             raise Exception
         
-        if "bref_size_CERO_SIETE" in result:
+        if "bref_size_POINT_SEVEN" in result:
             r["bref_size"]=0.7
-        elif "bref_size_UNO" in result:
+        elif "bref_size_ONE" in result:
             r["bref_size"]=1
-        elif "bref_size_DOS" in result:
+        elif "bref_size_TWO" in result:
             r["bref_size"]=2
         else:
             raise Exception
         
-        if "cserver_size_CERO_SEIS" in result:
+        if "cserver_size_POINT_SIX" in result:
             r["cserver_size"]=0.6
-        elif "cserver_size_CERO_NUEVE" in result:
+        elif "cserver_size_POINT_NINE" in result:
             r["cserver_size"]=0.9
-        elif "cserver_size_DOS" in result:
+        elif "cserver_size_TWO" in result:
             r["cserver_size"]=2
         else:
             raise Exception
