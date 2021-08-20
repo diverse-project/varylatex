@@ -14,7 +14,6 @@ from vary.model.generation.inject import write_variables
 from vary.model.generation.compile import compile_latex
 from vary.model.generation.analyze_pdf import page_count
 
-
 def random_config(conf_source, fixed_values={}):
     """
     Generates a config dictionnary based on the range of values provided from a dictionnary containing the following keys :
@@ -81,8 +80,7 @@ def generate_random(conf_source, filename, temp_path, fixes_values={}):
     """
     config = random_config(conf_source, fixes_values)
     return generate_pdf(config, filename, temp_path)
-
-
+    
 def generate_pdfs(filename, source, output, nb_gens, reset=True, fixed_values = {}):
     """
     Creates as many PDFs as specified with nb_gens, from a random config based on conf_source, and calculate

@@ -1,6 +1,9 @@
 Flask==1.1.2
 intervaltree==3.0.2
-PyMuPDF==1.17.1
+PyMuPDF==1.18.16
 pandas==1.0.5
 requests==2.22.0
 scikit-learn==0.23.1
+famapy==0.5.1
+famapy-fm==0.5.0
+famapy-sat==0.5.1

@@ -12,6 +12,8 @@ from vary.model.files.tex_injection import inject_space_indicator
 from vary.model.generation.generate import generate_random, generate_pdf
 from vary.model.generation.compile import generate_bbl
 from vary.model.decision_trees.analysis import decision_tree
+from vary.model.feature_models.fm_operations import getFeatureHeaders, getProducts, getRandomProduct
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -31,6 +33,7 @@ if __name__ == "__main__":
                         It needs to have a 'values.json' file and the document must include 'macros' and 'values'")
     parser.add_argument("-c", "--config", help="Generate a specific PDF from a config JSON string")
     parser.add_argument("-p", "--maxpages", type=int, help="The maximum amount of pages accepted for the document")
+    parser.add_argument("-fm","--feature-model", action="store_true", help="This is relying on Famapy to generate the set of configurations. Now this allows contratins. However, a translation to the varylatex format has to be manually done" )
     args = parser.parse_args()
 
     document_path = args.source
@@ -42,18 +45,25 @@ if __name__ == "__main__":
 
     temp_path = create_temporary_copy(document_path)
 
-    conf_source_path = os.path.join(document_path, "variables.json")
-    with open(conf_source_path) as f:
-        conf_source = json.load(f)
+    if args.feature_model :
+        conf_source_path = os.path.join(document_path, "feature_model.uvl")
+        #DataFrame init
+        cols = getFeatureHeaders(conf_source_path)
+        df = pd.DataFrame(columns=cols)
 
-    # DataFrame initialisation 
-    cols = conf_source["booleans"] + \
-        list(conf_source["numbers"].keys()) + \
-        list(conf_source["enums"].keys()) + \
-        list(flatten(conf_source["choices"])) + \
-        ["nbPages", "space"]
-    df = pd.DataFrame(columns=cols)
+    else:
+        conf_source_path = os.path.join(document_path, "variables.json")
+        with open(conf_source_path) as f:
+            conf_source = json.load(f)
 
+        # DataFrame initialisation 
+        cols = conf_source["booleans"] + \
+            list(conf_source["numbers"].keys()) + \
+            list(conf_source["enums"].keys()) + \
+            list(flatten(conf_source["choices"])) + \
+            ["nbPages", "space"]
+        df = pd.DataFrame(columns=cols)
+    print(df)
     file_path = os.path.join(temp_path, filename)
     inject_space_indicator(file_path)
     # LaTeX bbl pregeneration
@@ -67,9 +77,17 @@ if __name__ == "__main__":
         pdf_name = filename+".pdf"
         shutil.copyfile(os.path.join(temp_path, pdf_name), os.path.join(args.output, pdf_name))
     else:
+        if args.feature_model:
+            products = getProducts(conf_source_path)
         for i in range(args.generations):
-            row = generate_random(conf_source, filename, temp_path)
+            if args.feature_model:
+                row = getRandomProduct(products)
+                row = generate_pdf(row, filename, temp_path)
+            else:
+                row = generate_random(conf_source, filename, temp_path)
+                
             df = df.append(row, ignore_index=True)
+            
             if args.verbose:
                 print(f"Doc {i} generated")
 
