@@ -33,7 +33,7 @@ if __name__ == "__main__":
                         It needs to have a 'values.json' file and the document must include 'macros' and 'values'")
     parser.add_argument("-c", "--config", help="Generate a specific PDF from a config JSON string")
     parser.add_argument("-p", "--maxpages", type=int, help="The maximum amount of pages accepted for the document")
-    parser.add_argument("-fm","--feature-model", action="store_true", help="Famapy" )
+    parser.add_argument("-fm","--feature-model", action="store_true", help="This is relying on Famapy to generate the set of configurations. Now this allows contratins. However, a translation to the varylatex format has to be manually done" )
     args = parser.parse_args()
 
     document_path = args.source
