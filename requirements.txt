@@ -2,5 +2,5 @@ Flask==1.1.2
 intervaltree==3.0.2
 PyMuPDF==1.17.1
 pandas==1.0.5
-requests==2.22.0
+requests==2.31.0
 scikit-learn==0.23.1
